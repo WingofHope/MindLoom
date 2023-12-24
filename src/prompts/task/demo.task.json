@@ -1,0 +1,34 @@
+{
+    "id": "task_01",
+    "name": "task_name",
+    "description": "task_description",
+    "inputs": [
+        {
+            "name": "input_param_01",
+            "description": "input_description",
+            "type": "string"
+        },
+        {
+            "name": "input_param_02",
+            "description": "input_description",
+            "type": "list"
+        }
+        // ... 其他输入
+    ],
+    "main_process": {
+        "process_id": "process_001",
+        "inputs": [
+            {
+              "name": "process_input_1",
+              "type": "string",
+              "source": "input_param_01"
+            },
+            {
+              "name": "process_input_2",
+              "type": "list",
+              "source": "input_param_02"
+            }
+            // ... 其他输入
+        ],
+    }
+}
