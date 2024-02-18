@@ -1,0 +1,72 @@
+{
+    "prompts": {
+        "default_source": "file",
+        "file_config":{
+            "source":"file",
+            "file_path": "prompts/"
+        },
+        "mongodb_config": {
+            "source":"mongodb",
+            "host": "localhost",
+            "port": 27017,
+            "username": "db_username",
+            "password": "db_password",
+            "database": "db_name"
+        }
+    },
+    "generate": {
+        "llm": ["gpt","baichuan2"]
+    },
+    "actions": {
+        "default_mode": "rabbitmq",
+        "type": ["Synchronous", "asynchronous", "callback"],
+        "REST_API_config": {
+            "mode":"REST_API",
+            "url": "https://xiaoxi.com/actions/v1/api",
+            "headers": {
+                "Authorization": "Bearer api_token"
+            }
+        },
+        "rabbitmq_config": {
+            "mode": "rabbitmq",
+            "host": "localhost",
+            "port": 5672,
+            "username": "guest",
+            "password": "guest"
+            }
+        },
+    "tools": {
+        "default_define": "local",
+        "local_define": {
+            "default_define":"local",
+            "file_path": "prompts/tools/"
+        }
+    },
+    "performance": {
+        "task":{
+            "max_processes": 2,
+            "max_threads": 5,
+            "max_executor_timeout": 6000,
+            "request_return": "true"
+        },
+        "process": {
+            "sequential": {
+                "max_unit": 10,
+                "max_executor_timeout": 60
+            },
+            "parallel": {
+                "max_threads": 5,
+                "max_executor_timeout": 60
+            },
+            "select": {
+                "max_branch": 10,
+                "max_executor_timeout": 60
+            },
+            "loop": {
+                "max_loop_num": 100,
+                "max_executor_timeout": 60
+            }
+        }
+    }
+}
+  
