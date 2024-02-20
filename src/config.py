@@ -22,3 +22,7 @@ if 'log_config' in config_json:
         LOG_PATH = config_json['log_config']['path']
     if 'mode' in config_json['log_config']:
         LOG_MODE = config_json['log_config']['mode']
+# 获取MongoDB 相关配置
+MONGO_CONFIG = {'host':'localhost', 'port':27017, 'username':None, 'password':None, 'db_name':'test'}
+if 'mongodb_config' in config_json:
+    MONGO_CONFIG = config_json['mongodb_config']

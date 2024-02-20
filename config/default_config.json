@@ -15,7 +15,7 @@
             "port": 27017,
             "username": "db_username",
             "password": "db_password",
-            "database": "db_name"
+            "db_name": "db_name"
         }
     },
     "generate": {
