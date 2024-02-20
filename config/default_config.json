@@ -1,12 +1,16 @@
 {
+    "log_config": {
+        "mode": "debug",
+        "path": "log/"
+    },
     "prompts": {
         "default_source": "file",
         "file_config":{
-            "source":"file",
+            "source": "file",
             "file_path": "prompts/"
         },
         "mongodb_config": {
-            "source":"mongodb",
+            "source": "mongodb",
             "host": "localhost",
             "port": 27017,
             "username": "db_username",
@@ -21,7 +25,7 @@
         "default_mode": "rabbitmq",
         "type": ["Synchronous", "asynchronous", "callback"],
         "REST_API_config": {
-            "mode":"REST_API",
+            "mode": "REST_API",
             "url": "https://xiaoxi.com/actions/v1/api",
             "headers": {
                 "Authorization": "Bearer api_token"
@@ -38,7 +42,7 @@
     "tools": {
         "default_define": "local",
         "local_define": {
-            "default_define":"local",
+            "default_define": "local",
             "file_path": "prompts/tools/"
         }
     },

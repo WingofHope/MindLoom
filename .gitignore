@@ -7,3 +7,4 @@ venv/
 .vscode/
 .idea/
 **/.code-workspace
+log/
