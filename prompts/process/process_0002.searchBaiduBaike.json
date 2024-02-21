@@ -1,0 +1,119 @@
+{
+    "id": "process_0002",
+    "name": "searchBaiduBaike",
+    "description": "到百度百科查询行业关键词",
+    "inputs": [
+        {
+            "name": "q",
+            "type": "string",
+            "description": "问题"
+        },
+        {
+            "name": "b_n",
+            "type": "string",
+            "description": "行业类型"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "answer",
+            "type": "string",
+            "description": "回答问题的话术"
+        }
+    ],
+    "execution":{
+        "type": "sequence",
+        "steps": [
+            {
+                "class":"action",
+                "id": "action_0001",
+                "description": "过滤行业名词",
+                "order":1,
+                "inputs": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "source": "b_n"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "target": "b_n"
+                    }
+                ]
+            },
+            {
+                "class":"generator",
+                "id": "generate_0001",
+                "description": "生成百度百科关键字",
+                "order":2,
+                "inputs": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "source": "b_n"
+                    },
+                    {
+                        "name": "question",
+                        "type": "string",
+                        "source": "q"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "keyword",
+                        "type": "string",
+                        "target": "baike_keyword"
+                    }
+                ]
+            },
+            {
+                "class":"tool",
+                "id": "tool_0002",
+                "description": "根据关键字获取百科简要描述信息",
+                "order":3,
+                "inputs": [
+                    {
+                        "name": "keyword",
+                        "type": "string",
+                        "source": "baike_keyword"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "summary",
+                        "type": "string",
+                        "target": "baike_ret"
+                    }
+                ]
+            },
+            {
+                "class":"generator",
+                "id": "generate_0002",
+                "description": "根据百科描述回答用户的问题",
+                "order":4,
+                "inputs": [
+                    {
+                        "name": "description",
+                        "type": "string",
+                        "source": "baike_ret"
+                    },
+                    {
+                        "name": "question",
+                        "type": "string",
+                        "source": "q"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "answer",
+                        "type": "string",
+                        "target": "answer"
+                    }
+                ]
+            },
+        ]
+    }
+}

@@ -1,0 +1,60 @@
+{
+    "generator_id": "generator_0001",
+    "name":"baike_keyword_gen",
+    "description": "根据行名字题和问题生成百科关键字",
+    "input": [ 
+        {
+            "name": "name",
+            "type": "string",
+            "description": "行业名字"
+        },  
+        {
+            "name": "question",
+            "type": "string",
+            "description": "问题"
+        }   
+    ],
+    "output": [
+        {
+            "name": "keyword",
+            "description": "关键字", 
+            "type": "string",
+            "begin": "",
+            "end": ""
+        }
+    ],
+    "template": {
+        "lm": "gpt",
+        "mode": "chat",
+        "post_body": {
+            "model": "gpt-3.5-turbo-0613",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "根据行业和问题，生成需要查询的百度百科关键字"
+                },
+                {
+                    "role": "user",
+                    "content": "行业是：法律，问题是：我国公民享受权益指什么？"
+                },
+                {
+                    "role": "assistant",
+                    "content": "权益"
+                },
+                {
+                    "role": "user",
+                    "content": "行业是：{name}，用户问题是：{question}"
+                }
+            ],
+            "temperature": 0,
+            "max_tokens": 1024,
+            "top_p": 1,
+            "frequency_penalty": 0.9,
+            "presence_penalty": 0.9,
+            "stop": ""
+        },
+        "assert": {
+            "finish_reason" : "stop",
+            "choices_length": 1
+        }
+    }
