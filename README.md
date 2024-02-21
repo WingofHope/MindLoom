@@ -11,7 +11,7 @@ MindLoom/
 ├── src/                        # 源代码目录
 │   ├── enginee/                # 引擎代码目录
 │   │   ├── base/               # 引擎基类
-│   │   ├── excutor/            # 执行器类
+│   │   ├── executor/            # 执行器类
 │   │   │   ├── action/         # Action 与外部交互的操作类
 │   │   │   ├── generator/      # Generator LLM一次内容生成于模版替换类
 │   │   │   └── tool/           # Tool 引擎用到的内部工具类
