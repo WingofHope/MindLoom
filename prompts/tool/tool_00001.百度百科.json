@@ -1,0 +1,19 @@
+{
+    "id":"tool_0002",
+    "name":"百度百科",
+    "description":"根据关键词条，返回百度百科简介",
+    "input":[
+        {
+            "name": "keyword",
+            "type": "string",
+            "description":"需要查询百度百科词条"
+        }
+    ],
+    "output":[
+        {
+            "name":"summary",
+            "description":"百度百科对该词条简介，如果没有返回空字符串",
+            "type":"string"
+        },
+    ]
+}
