@@ -6,3 +6,5 @@ __pycache__/
 venv/
 .vscode/
 .idea/
+**/.code-workspace
+log/

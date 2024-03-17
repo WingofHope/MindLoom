@@ -1,0 +1,41 @@
+{
+    "id": "process_0001",
+    "name": "main",
+    "description": "百度百科解释行业名词的主任务",
+    "inputs": [
+        {
+            "name": "business_name",
+            "type": "string",
+            "description": "行业名字"
+        },
+        {
+            "name": "question",
+            "type": "string",
+            "description": "一个关于名词解释的问题"
+        }
+    ],
+    "outputs": [],
+    "execution":{
+        "type": "sequence",
+        "steps": [
+            {
+                "id": "process_0002",
+                "description": "进入百度百科专门的流程",
+                "order":1,
+                "inputs": [
+                    {
+                        "name": "q",
+                        "type": "string",
+                        "source": "question"
+                    },
+                    {
+                        "name": "b_n",
+                        "type": "string",
+                        "source": "business_name"
+                    }
+                ],
+                "outputs": []
+            }
+        ]
+    }
+}

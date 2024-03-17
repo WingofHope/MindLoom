@@ -1,0 +1,32 @@
+{
+    "id": "task_0001",
+    "name": "baidu_baike_answer",
+    "description": "一个利用百度百科解释名词的任务，输入一个问题，返回答案",
+    "inputs": [
+        {
+            "name": "business_name",
+            "description": "行业名字",
+            "type": "string"
+        },
+        {
+            "name": "question",
+            "description": "一个关于名词解释的问题",
+            "type": "string"
+        }
+    ],
+    "process": {
+        "id": "process_0001",
+        "inputs": [
+            {
+                "name": "business_name",
+                "type": "string",
+                "source": "business_name"
+            },
+            {
+                "name": "question",
+                "type": "string",
+                "source": "question"
+            }
+        ],
+    }
+}

@@ -1,0 +1,52 @@
+{
+    "generator_id": "generate_0002",
+    "name":"answer_by_baidubaike",
+    "description": "根据百度百科内容回答问题",
+    "input": [ 
+        {
+            "name": "question",
+            "type": "string",
+            "description": "用户的问题"
+        },  
+        {
+            "name": "description",
+            "type": "string",
+            "description": "百度百科的描述"
+        }   
+    ],
+    "output": [
+        {
+            "name": "answer",
+            "description": "回答用户的答案", 
+            "type": "string",
+            "begin": "回答：",
+            "end": ""
+        }
+    ],
+    "template": {
+        "lm": "gpt",
+        "mode": "chat",
+        "post_body": {
+            "model": "gpt-3.5-turbo-0613",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "根据当前百度百科的词条内容回答用户问题，请生成“回答：”并在后面回复用户的问题。"
+                },
+                {
+                    "role": "user",
+                    "content": "百度百科的描述：{description}，用户的问题：{question}"
+                }
+            ],
+            "temperature": 0,
+            "max_tokens": 1024,
+            "top_p": 1,
+            "frequency_penalty": 0.9,
+            "presence_penalty": 0.9,
+            "stop": ""
+        },
+        "assert": {
+            "finish_reason" : "stop",
+            "choices_length": 1
+        }
+    }
