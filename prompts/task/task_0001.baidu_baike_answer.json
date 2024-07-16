@@ -27,6 +27,6 @@
                 "type": "string",
                 "source": "question"
             }
-        ],
+        ]
     }
 }

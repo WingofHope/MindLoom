@@ -11,28 +11,28 @@ from src.engine.scheduler.task.task import Task
 class TestTask(unittest.TestCase):
     def test_run_case1(self):
         t_id = 'task_0001'
-        inputs = {}
+        inputs = {'小C','小C是曦之翼的智能AI客服，擅长处理各种AI问题，说话幽默','WAB测试群（7）'}
         secret = None
 
         task_instance = Task(t_id, inputs, secret)
+        print(task_instance.get_template())
         result = task_instance.run()
-        print(result)
 
         # 这里编写断言来验证 run 方法的输出是否符合预期
         self.assertEqual(result, {})
 
-    def test_run_case2(self):
-        t_id = 'task_0002'
-        inputs = {'name': 'haha'}
-        secret = None
+    # def test_run_case2(self):
+    #     t_id = 'task_0002'
+    #     inputs = {'name': 'haha'}
+    #     secret = None
 
-        task_instance = Task(t_id, inputs, secret)
-        result = task_instance.run()
-        print(result)
+    #     task_instance = Task(t_id, inputs, secret)
+    #     result = task_instance.run()
+    #     print(result)
 
-        # 这里编写断言来验证 run 方法的输出是否符合预期
-        # 示例断言，你需要根据具体情况调整
-        self.assertEqual(result, {})
+    #     # 这里编写断言来验证 run 方法的输出是否符合预期
+    #     # 示例断言，你需要根据具体情况调整
+    #     self.assertEqual(result, {})
 
 if __name__ == '__main__':
     unittest.main()

@@ -46,3 +46,5 @@ class MongoDB:
             return result
         except Exception as e:
             self.logger.error(f"Failed to find document: {e}")
+
+mongo_db = MongoDB()
