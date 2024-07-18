@@ -14,7 +14,7 @@ class TestBase(unittest.TestCase):
         inputs = {'小C','小C是曦之翼的智能AI客服，擅长处理各种AI问题，说话幽默','WAB测试群（7）'}
         secret = None
 
-        base_instance = Base(t_id, inputs, secret)
+        base_instance = Base(t_id, secret)
 
         # 这里编写断言来验证 run 方法的输出是否符合预期
         self.assertEqual(result, {})

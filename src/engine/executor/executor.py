@@ -3,8 +3,8 @@
 from ..base.base import Base
 
 class Executor(Base):
-    def __init__(self, id, inputs, secret):
-        super().__init__(id, inputs, secret)
+    def __init__(self, id, secret):
+        super().__init__(id, secret)
 
     def run(self):
         """ 执行流程 """

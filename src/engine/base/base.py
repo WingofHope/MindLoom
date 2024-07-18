@@ -11,12 +11,14 @@ if TEMPLATE_LOAD_METHOD == 'mongodb':
 elif TEMPLATE_LOAD_METHOD == 'file':
     from ...config import TEMPLATE_FILE_PATH
 
-class ValidationError(Exception):
-    pass
-
 # 定义基础类
 class Base:
-
+    # 定义模版校验错误的类
+    class TemplateError(Exception):
+        pass
+    # 定义值校验错误类
+    class ValidationError(Exception):
+        pass
     # 定义类名字映射的文件夹、数据库的名字
     CLASS_NAME_MAPPING = {
         'Action': 'action',
@@ -25,16 +27,15 @@ class Base:
         'Task': 'task'
     }
 
-    def __init__(self, id, inputs, secret):
+    def __init__(self, id, secret):
         self.id = id
-        self.input_dict = inputs
         self.secret = secret
         # 初始化模板
         self.template = self.load_template()
-        
         # 校验模板是否合法
-        # self.validate_template()
+        self.validate_template()
 
+    # 从本地文件读取提示模板方法
     @staticmethod
     def load_template_by_file(type_name, id):
         # 生成完整文件夹路径名字
@@ -58,13 +59,14 @@ class Base:
         except Exception as e:
             raise e
 
+    # 从mongoDB读取提示模板方法
     @staticmethod
     def load_template_by_mongodb(type_name, id):
         try:
             # 转换字符串id为ObjectId
             object_id = ObjectId(id)
         except Exception as e:
-            raise ValueError(f"无效的id: {id}. {str(e)}")
+            raise self.ValueError(f"无效的id: {id}. {str(e)}")
         
         try:
             # 使用实例化的MongoDB类的find_data方法查找数据
@@ -85,7 +87,7 @@ class Base:
 
         # 检查类名是否合法，只有Action、Generator、Process、Task可以获取提示模板
         if class_type not in self.CLASS_NAME_MAPPING:
-            raise ValueError("class_type必须是Action、Generator、Process、Task中的一个")
+            raise self.ValueError("class_type必须是Action、Generator、Process、Task中的一个")
 
         # 类名转换成索引类名
         type_name = self.CLASS_NAME_MAPPING[class_type]
@@ -105,13 +107,37 @@ class Base:
 
     # 校验提示模板是否合法
     def validate_template(self):
-        # 基础的校验逻辑
-        if not isinstance(self.template, dict):
-            raise ValidationError(f"Template must be a dictionary, got {type(self.template)} instead.")
+        # 检查template是否存在
         if not self.template:
-            raise ValidationError("Template cannot be empty.")
+            raise self.TemplateError("模板不能为空。")
+
+        # 检查 template 是否是一个字典
+        if not isinstance(self.template, dict):
+            raise self.TemplateError("模板必须是一个字典。")
+        
+        # 检查必须的参数 name, description, inputs, outputs 是否在 template 中
+        required_keys = ["name", "description", "inputs", "outputs"]
+        for key in required_keys:
+            if key not in self.template:
+                raise self.TemplateError(f"模板必须包含'{key}'。")
+
+        # 检查 inputs 和 outputs 是否为 list 或 None
+        for key in ["inputs", "outputs"]:
+            if self.template[key] is not None and not isinstance(self.template[key], list):
+                raise self.TemplateError(f"'{key}'必须是一个列表或null。")
+            
+            # 如果是 list，则检查每个元素是否是字典，并包含 name, description, type
+            if isinstance(self.template[key], list):
+                for item in self.template[key]:
+                    if not isinstance(item, dict):
+                        raise self.TemplateError(f"'{key}'中的每个元素必须是一个字典/MAP。")
+                    
+                    required_item_keys = ["name", "description", "type"]
+                    for item_key in required_item_keys:
+                        if item_key not in item:
+                            raise self.TemplateError(f"'{key}'中的每个元素必须包含'{item_key}'。")
 
     # 必须重载的run函数
     @abstractmethod
-    def run(self):
+    def run(self, inputs):
         return {}

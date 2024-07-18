@@ -3,8 +3,8 @@
 from ..scheduler import Scheduler
 
 class Task(Scheduler):
-    def __init__(self, t_id, inputs, secret):
-        super().__init__(t_id, inputs, secret)
+    def __init__(self, t_id, secret):
+        super().__init__(t_id, secret)
 
     def run(self):
         """ 执行流程 """
