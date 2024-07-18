@@ -3,9 +3,9 @@
 from ..scheduler import Scheduler
 
 class Task(Scheduler):
-    def __init__(self, t_id, secret):
-        super().__init__(t_id, secret)
+    def __init__(self, id, secret):
+        super().__init__(id, secret)
 
-    def run(self):
+    def run(self, inputs):
         """ 执行流程 """
         return {'answer':'这个问题我不知道哦。'}

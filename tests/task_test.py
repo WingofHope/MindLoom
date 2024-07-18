@@ -16,7 +16,7 @@ class TestTask(unittest.TestCase):
         try:
             task_instance = Task(t_id, secret)
             print(task_instance.get_template())
-            result = task_instance.run()
+            result = task_instance.run(inputs)
         except Exception as e:
             print(e)
 
