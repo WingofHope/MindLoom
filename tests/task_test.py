@@ -11,15 +11,21 @@ from src.engine.scheduler.task.task import Task
 class TestTask(unittest.TestCase):
     def test_run_case1(self):
         t_id = 'task_0001'
-        inputs = {'小C','小C是曦之翼的智能AI客服，擅长处理各种AI问题，说话幽默','WAB测试群（7）'}
+        inputs = {
+            'name' : '小C',
+            'description' : '小C是曦之翼的智能AI客服，擅长处理各种AI问题，说话幽默',
+            'group_name' : 'WAB测试群（7）',
+            'business_name': 'nihao ',
+            'question' : ''
+        }
         secret = None
         try:
             task_instance = Task(t_id, secret)
-            print(task_instance.get_template())
             result = task_instance.run(inputs)
         except Exception as e:
             print(e)
 
+        print(result)
         # 这里编写断言来验证 run 方法的输出是否符合预期
         # self.assertEqual(result, {})
 
