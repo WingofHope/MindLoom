@@ -1,15 +1,21 @@
 # src/engine/scheduler/scheduler.py
 
 from abc import ABC, abstractmethod
-from ..base.base import Base
+
+# 导入配置文件从而确定根路径
+from ...config import root_path
+from src.engine.base.base import Base
+from src.engine.executor.action.action import Action
+from src.engine.executor.generator.generator import Generator
+from src.engine.executor.tool.tool import Tool
 
 class Scheduler(Base):
-    # 定义类名字映射的文件夹、数据库的名字
+    # 定义提示模板中的calss字段与py定义的类名的映射关系
     EXECUTION_CLASS_MAPPING = {
-        'action': 'Action',
-        'generator': 'Generator',
-        'process': 'Process',
-        'tool': 'Tool'
+        'action': Action,
+        'generator': Generator,
+        'process': None,
+        'tool': Tool
     }
 
     def __init__(self, id, secret):
@@ -73,7 +79,14 @@ class Scheduler(Base):
 
     # 执行一次嵌套调用
     def call_execute(self, call_dict):
-        self.parameters['answer'] = '你好'
+        # 根据class字段名，获取类定义
+        call_class = self.EXECUTION_CLASS_MAPPING[call_dict['class']]
+        # 直接新实例化一个对应类的对象！！！！！！！！！！！！！！！
+        call = call_class(call_dict['id'], secret = None)
+        # 运行一次获取结果
+        outputs = call.run(inputs)
+        for param_name in outputs:
+            self.parameters[param_name] = outputs[param_name]
 
     @abstractmethod
     def run(self, inputs):

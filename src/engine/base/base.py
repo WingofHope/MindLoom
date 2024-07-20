@@ -4,8 +4,11 @@ import os
 from abc import ABC, abstractmethod
 from bson import ObjectId
 import json
-from ...config import TEMPLATE_LOAD_METHOD
 
+# 导入配置文件从而确定根路径
+from ...config import root_path
+# 从配置文件获取提示模板读入的方式
+from config import TEMPLATE_LOAD_METHOD
 if TEMPLATE_LOAD_METHOD == 'mongodb':
     from services.mongodb.mongodb import mongo_db
 elif TEMPLATE_LOAD_METHOD == 'file':
