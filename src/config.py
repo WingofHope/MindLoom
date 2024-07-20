@@ -11,24 +11,49 @@ sys.path.insert(0, os.path.dirname(__file__))
 # 获取默认配置文件路径
 config_path = os.path.join(root_path,'config/default_config.json')
 # 从文件中加载 JSON 数据
-config_json = {}
-with open(config_path, 'r') as config_file:
-    config_json = json.load(config_file)
+class Config:
+    def __init__(self, config_path=config_path):
+        self.config_path = config_path
+        self.config = self.load_config()
 
-TEMPLATE_LOAD_METHOD = 'file'
-if TEMPLATE_LOAD_METHOD == 'file':
-    TEMPLATE_FILE_PATH = config_path = os.path.join(root_path,'prompts')
+    def load_config(self):
+        with open(self.config_path, 'r') as config_file:
+            return json.load(config_file)
+
+    def get(self, key, default=None):
+        keys = key.split('.')
+        value = self.config
+        try:
+            for k in keys:
+                value = value[k]
+        except KeyError:
+            return default
+        return value
+
+    def set(self, key, value):
+        keys = key.split('.')
+        d = self.config
+        for k in keys[:-1]:
+            d = d.setdefault(k, {})
+        d[keys[-1]] = value
+        self.save_config()
+
+    def save_config(self):
+        with open(self.config_path, 'w') as config_file:
+            json.dump(self.config, config_file, indent=4)
+
+# Initialize the configuration
+config = Config()
 
 # 获取 LOG 相关配置
-LOG_PATH = 'log/'
-LOG_MODE = 'debug'
-if 'log_config' in config_json:
-    if 'path' in config_json['log_config']:
-        LOG_PATH = config_json['log_config']['path']
-    if 'mode' in config_json['log_config']:
-        LOG_MODE = config_json['log_config']['mode']
+LOG_PATH = config.get('log_config.path', 'log/')
+LOG_MODE = config.get('log_config.mode', 'debug')
 
 # 获取MongoDB 相关配置
 MONGO_CONFIG = {'host':'localhost', 'port':27017, 'username':None, 'password':None, 'db_name':'test'}
-if 'mongodb_config' in config_json:
-    MONGO_CONFIG = config_json['mongodb_config']
+# if 'mongodb_config' in config_json:
+#     MONGO_CONFIG = config_json['mongodb_config']
+
+# Example usage
+# if __name__ == "__main__":
+#     print(config.get("随便来个database url"))

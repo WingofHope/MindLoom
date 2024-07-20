@@ -34,6 +34,9 @@ class BaseLogger:
         file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
 
+    def get_logger(self):
+        return self.logger
+
     def debug(self, message):
         self.logger.debug(message)
 
