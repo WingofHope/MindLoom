@@ -81,12 +81,47 @@ class Scheduler(Base):
     def call_execute(self, call_dict):
         # 根据class字段名，获取类定义
         call_class = self.EXECUTION_CLASS_MAPPING[call_dict['class']]
-        # 直接新实例化一个对应类的对象！！！！！！！！！！！！！！！
+        # 直接新实例化一个对应类的对象！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         call = call_class(call_dict['id'], secret = None)
-        # 运行一次获取结果
+
+        print(call_dict)
+
+        # 从类内存变量中获取call需要的输入参数
+        if call_dict['inputs'] == None:
+            inputs = None
+        else:
+            inputs = {}
+            for input in call_dict['inputs']:
+                # 如果value存在，直接赋初始值
+                if 'value' in input:
+                    inputs[input['name']] = input['value']
+                # 如果value不存在，需要从类内存空间获取
+                else:
+                    param_name = input['source']
+                    # 校验参数是否存在
+                    if param_name not in self.parameters:
+                        raise self.ValidationError(f"缺少输入参数: {param_name}。")
+                    # 校验参数类型是否合法
+                    self.validate_param_type(param_name,input['type'],self.parameters[param_name])
+                    # 给需要传入的参数赋值
+                    inputs[input['name']] = self.parameters[param_name]
+
+        # 执行一次call，获取outputs！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         outputs = call.run(inputs)
-        for param_name in outputs:
-            self.parameters[param_name] = outputs[param_name]
+
+        # 将call调用返回的outputs放置到类内存空间的变量中
+        if call_dict['outputs'] == None:
+            pass
+        else:
+            for output in call_dict['outputs']:
+                param_name = output['source']
+                # 校验需要的输出参数是否存在
+                if param_name not in outputs:
+                    raise self.ValidationError(f"缺少输出参数: {param_name}。")
+                # 校验参数类型是否合法
+                self.validate_param_type(param_name,output['type'],outputs[param_name])
+                # 将输出放入类内存变量中
+                self.parameters[output['name']] = outputs[param_name]
 
     @abstractmethod
     def run(self, inputs):

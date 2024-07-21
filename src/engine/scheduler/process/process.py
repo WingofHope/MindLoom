@@ -23,7 +23,7 @@ class Process(Scheduler):
         self.set_parameters_by_inputs(inputs)
         ###########
         #需要在这里添加执行流程#
-        print('coco')
+        self.parameters['ans'] = '哈哈哈哈'
         ###########
         # 获取输出参数
         outputs = self.get_outputs_by_parameters()
