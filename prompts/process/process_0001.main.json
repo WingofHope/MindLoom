@@ -14,7 +14,11 @@
             "description": "一个关于名词解释的问题"
         }
     ],
-    "outputs": [],
+    "outputs": [{
+            "name": "ans",
+            "type": "string",
+            "description": "问题的答案"
+        }],
     "execution":{
         "type": "sequence",
         "steps": [

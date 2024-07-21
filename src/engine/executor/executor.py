@@ -1,11 +1,12 @@
 # src/engine/executor/executor.py
 
-from ..base.base import Base
+from ...config import root_path
+from src.engine.base.base import Base
 
 class Executor(Base):
-    def __init__(self, id, inputs, secret):
-        super().__init__(id, inputs, secret)
+    def __init__(self, id, secret):
+        super().__init__(id, secret)
 
-    def run(self):
-        """ 执行流程 """
-        raise NotImplementedError("Must implement run() method")
+    def run(self, inputs):
+        return {}
+        

@@ -24,25 +24,27 @@
     "execution":{
         "type": "sequence",
         "steps": [
-            {
-                "class":"action",
-                "id": "action_0001",
-                "description": "过滤行业名词",
+            {   
                 "order":1,
-                "inputs": [
-                    {
-                        "name": "name",
-                        "type": "string",
-                        "source": "b_n"
-                    }
-                ],
-                "outputs": [
-                    {
-                        "name": "name",
-                        "type": "string",
-                        "target": "b_n"
-                    }
-                ]
+                "call":{
+                    "class":"action",
+                    "id": "action_0001",
+                    "description": "过滤行业名词",
+                    "inputs": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "source": "b_n"
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "target": "b_n"
+                        }
+                    ]
+                }
             },
             {
                 "class":"generator",

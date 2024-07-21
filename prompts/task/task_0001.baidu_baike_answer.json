@@ -14,19 +14,34 @@
             "type": "string"
         }
     ],
-    "process": {
-        "id": "process_0001",
-        "inputs": [
-            {
-                "name": "business_name",
-                "type": "string",
-                "source": "business_name"
-            },
-            {
-                "name": "question",
-                "type": "string",
-                "source": "question"
-            }
-        ],
+    "outputs":[
+        {
+            "name": "answer",
+            "description": "问题的答案",
+            "type": "string"
+        }
+    ],
+    "execution": {
+        "call":{
+            "id": "process_0001",
+            "class":"process",
+            "inputs": [
+                {
+                    "name": "business_name",
+                    "type": "string",
+                    "source": "business_name"
+                },
+                {
+                    "name": "question",
+                    "type": "string",
+                    "value": "question"
+                }
+            ],
+            "outputs":[{
+                    "name": "answer",
+                    "type": "string",
+                    "source": "ans"
+            }]
+        }
     }
 }
