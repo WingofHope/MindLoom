@@ -1,0 +1,927 @@
+File: .gitignore
+====================
+# 忽略 Mac OS 文件系统生成的 .DS_Store 文件
+.DS_Store
+**/.DS_Store
+__pycache__/
+*.pyc
+venv/
+.vscode/
+.idea/
+**/.code-workspace
+log/
+
+File: cp.py
+====================
+import os
+
+def copy_files_to_txt(directory, output_file):
+    file_extensions = ['.py', '.txt', '.json', '.md', '.gitignore']  # 添加需要复制的文件扩展名
+    with open(output_file, 'w', encoding='utf-8') as output_txt:
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                if any(file.endswith(ext) for ext in file_extensions):
+                    file_path = os.path.join(root, file)
+                    relative_path = os.path.relpath(file_path, directory)
+                    output_txt.write("File: {}\n".format(relative_path))
+                    output_txt.write("=" * 20 + "\n")
+                    with open(file_path, 'r', encoding='utf-8') as input_file:
+                        output_txt.write(input_file.read())
+                    output_txt.write("\n\n")
+
+directory_to_copy = r"H:\CHATGPTTOPLAYER\MindLoom\MindLoom"  # 修改为您要复制的目录
+output_txt_file = "output.txt"  # 输出的txt文件名
+
+copy_files_to_txt(directory_to_copy, output_txt_file)
+
+
+
+File: output.txt
+====================
+
+
+File: README.md
+====================
+# 目录结构
+```
+MindLoom/
+├── prompts/                    # 存放提示模版库，格式为json
+│   ├── action/                 # 执行外部动作定义
+│   ├── generator/              # llm交互生成内容的模版定义
+│   ├── process/                # 处理流程执行的定义，包括顺行sequential、分支选择select、循环loop、并行parallel等
+│   ├── task/                   # 明确的任务定义，是引擎的入口
+│   └── tool/                   # 内部调用工具类定义
+│
+├── src/                        # 源代码目录
+│   ├── enginee/                # 引擎代码目录
+│   │   ├── base/               # 引擎基类
+│   │   ├── executor/            # 执行器类
+│   │   │   ├── action/         # Action 与外部交互的操作类
+│   │   │   ├── generator/      # Generator LLM一次内容生成于模版替换类
+│   │   │   └── tool/           # Tool 引擎用到的内部工具类
+│   │   │
+│   │   ├── scheduler/          # 调度器类定义
+│   │   │   ├── process/        # Process 处理流程类
+│   │   │   └── task/           # Task 任务类，引擎的入口
+│   │   │
+│   │   └── utils/              # 引擎用到的应用程序或工具集模块
+│   │
+│   ├── services/               # 与引擎交互的服务模块
+│   │   ├── logger/             # Logger 日志相关服务
+│   │   ├── mongodb/            # MongoDB 数据库服务
+│   │   └── rabbitmq/           # RabbitMQ 消息队列服务
+│   │
+│   ├── config.py               # 读取配置文件和初始化项目根路径
+│   │
+│   └── main.py                 # 应用程序的主入口点
+│
+├── config/                     # 配置文件目录
+│   └── default_config.json     # 默认配置文件
+│
+├── log/                        # 日志文件目录
+│   └── mindloom.log            # 漫璐主日志
+│
+├── tests/                      # 测试代码集
+│
+├── docs/                       # 文档目录
+│   └── api_documentation.md    # API文档
+│
+├── notebooks/                  # Jupyter笔记本，用于演示和原型设计
+│   └── example_usage.ipynb     # 示例使用笔记本
+│
+├── requirements.txt            # 项目依赖
+├── setup.py                    # 安装脚本
+└── README.md                   # 项目说明文件
+```
+
+File: requirements.txt
+====================
+
+
+File: setup.py
+====================
+
+
+File: config\default_config.json
+====================
+{
+    "log_config": {
+        "mode": "debug",
+        "path": "log/"
+    },
+    "prompts": {
+        "default_source": "file",
+        "file_config":{
+            "source": "file",
+            "file_path": "prompts/"
+        },
+        "mongodb_config": {
+            "source": "mongodb",
+            "host": "localhost",
+            "port": 27017,
+            "username": "db_username",
+            "password": "db_password",
+            "db_name": "db_name"
+        }
+    },
+    "generate": {
+        "llm": ["gpt","baichuan2"]
+    },
+    "actions": {
+        "default_mode": "rabbitmq",
+        "type": ["Synchronous", "asynchronous", "callback"],
+        "REST_API_config": {
+            "mode": "REST_API",
+            "url": "https://xiaoxi.com/actions/v1/api",
+            "headers": {
+                "Authorization": "Bearer api_token"
+            }
+        },
+        "rabbitmq_config": {
+            "mode": "rabbitmq",
+            "host": "localhost",
+            "port": 5672,
+            "username": "guest",
+            "password": "guest"
+            }
+        },
+    "tools": {
+        "default_define": "local",
+        "local_define": {
+            "default_define": "local",
+            "file_path": "prompts/tools/"
+        }
+    },
+    "performance": {
+        "task":{
+            "max_processes": 2,
+            "max_threads": 5,
+            "max_executor_timeout": 6000,
+            "request_return": "true"
+        },
+        "process": {
+            "sequential": {
+                "max_unit": 10,
+                "max_executor_timeout": 60
+            },
+            "parallel": {
+                "max_threads": 5,
+                "max_executor_timeout": 60
+            },
+            "select": {
+                "max_branch": 10,
+                "max_executor_timeout": 60
+            },
+            "loop": {
+                "max_loop_num": 100,
+                "max_executor_timeout": 60
+            }
+        }
+    }
+}
+  
+
+File: docs\api_documentation.md
+====================
+
+
+File: prompts\action\action_0001.Businessb_name_filtering.json
+====================
+{
+    "action_id":"action_0001",
+    "name" : "Businessb_name_filtering",
+    "description" : "获取标准行业名字",
+    "inputs": [
+        {
+            "name": "name",
+            "type": "string",
+            "description": "待过滤的行业名字"
+        },
+    ],
+    "outputs": [
+        {
+            "name": "name",
+            "type": "string",
+            "description": "过滤后的行业名字"
+        },
+    ]
+}
+
+File: prompts\generate\generate_0001.baike_keyword_gen.json
+====================
+{
+    "generator_id": "generator_0001",
+    "name":"baike_keyword_gen",
+    "description": "根据行名字题和问题生成百科关键字",
+    "input": [ 
+        {
+            "name": "name",
+            "type": "string",
+            "description": "行业名字"
+        },  
+        {
+            "name": "question",
+            "type": "string",
+            "description": "问题"
+        }   
+    ],
+    "output": [
+        {
+            "name": "keyword",
+            "description": "关键字", 
+            "type": "string",
+            "begin": "",
+            "end": ""
+        }
+    ],
+    "template": {
+        "lm": "gpt",
+        "mode": "chat",
+        "post_body": {
+            "model": "gpt-3.5-turbo-0613",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "根据行业和问题，生成需要查询的百度百科关键字"
+                },
+                {
+                    "role": "user",
+                    "content": "行业是：法律，问题是：我国公民享受权益指什么？"
+                },
+                {
+                    "role": "assistant",
+                    "content": "权益"
+                },
+                {
+                    "role": "user",
+                    "content": "行业是：{name}，用户问题是：{question}"
+                }
+            ],
+            "temperature": 0,
+            "max_tokens": 1024,
+            "top_p": 1,
+            "frequency_penalty": 0.9,
+            "presence_penalty": 0.9,
+            "stop": ""
+        },
+        "assert": {
+            "finish_reason" : "stop",
+            "choices_length": 1
+        }
+    }
+
+File: prompts\generate\generate_0002.answer_by_baidubaike.json
+====================
+{
+    "generator_id": "generate_0002",
+    "name":"answer_by_baidubaike",
+    "description": "根据百度百科内容回答问题",
+    "input": [ 
+        {
+            "name": "question",
+            "type": "string",
+            "description": "用户的问题"
+        },  
+        {
+            "name": "description",
+            "type": "string",
+            "description": "百度百科的描述"
+        }   
+    ],
+    "output": [
+        {
+            "name": "answer",
+            "description": "回答用户的答案", 
+            "type": "string",
+            "begin": "回答：",
+            "end": ""
+        }
+    ],
+    "template": {
+        "lm": "gpt",
+        "mode": "chat",
+        "post_body": {
+            "model": "gpt-3.5-turbo-0613",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "根据当前百度百科的词条内容回答用户问题，请生成“回答：”并在后面回复用户的问题。"
+                },
+                {
+                    "role": "user",
+                    "content": "百度百科的描述：{description}，用户的问题：{question}"
+                }
+            ],
+            "temperature": 0,
+            "max_tokens": 1024,
+            "top_p": 1,
+            "frequency_penalty": 0.9,
+            "presence_penalty": 0.9,
+            "stop": ""
+        },
+        "assert": {
+            "finish_reason" : "stop",
+            "choices_length": 1
+        }
+    }
+
+File: prompts\process\process_0001.main.json
+====================
+{
+    "id": "process_0001",
+    "name": "main",
+    "description": "百度百科解释行业名词的主任务",
+    "inputs": [
+        {
+            "name": "business_name",
+            "type": "string",
+            "description": "行业名字"
+        },
+        {
+            "name": "question",
+            "type": "string",
+            "description": "一个关于名词解释的问题"
+        }
+    ],
+    "outputs": [],
+    "execution":{
+        "type": "sequence",
+        "steps": [
+            {
+                "id": "process_0002",
+                "description": "进入百度百科专门的流程",
+                "order":1,
+                "inputs": [
+                    {
+                        "name": "q",
+                        "type": "string",
+                        "source": "question"
+                    },
+                    {
+                        "name": "b_n",
+                        "type": "string",
+                        "source": "business_name"
+                    }
+                ],
+                "outputs": []
+            }
+        ]
+    }
+}
+
+File: prompts\process\process_0002.searchBaiduBaike.json
+====================
+{
+    "id": "process_0002",
+    "name": "searchBaiduBaike",
+    "description": "到百度百科查询行业关键词",
+    "inputs": [
+        {
+            "name": "q",
+            "type": "string",
+            "description": "问题"
+        },
+        {
+            "name": "b_n",
+            "type": "string",
+            "description": "行业类型"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "answer",
+            "type": "string",
+            "description": "回答问题的话术"
+        }
+    ],
+    "execution":{
+        "type": "sequence",
+        "steps": [
+            {
+                "class":"action",
+                "id": "action_0001",
+                "description": "过滤行业名词",
+                "order":1,
+                "inputs": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "source": "b_n"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "target": "b_n"
+                    }
+                ]
+            },
+            {
+                "class":"generator",
+                "id": "generate_0001",
+                "description": "生成百度百科关键字",
+                "order":2,
+                "inputs": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "source": "b_n"
+                    },
+                    {
+                        "name": "question",
+                        "type": "string",
+                        "source": "q"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "keyword",
+                        "type": "string",
+                        "target": "baike_keyword"
+                    }
+                ]
+            },
+            {
+                "class":"tool",
+                "id": "tool_0002",
+                "description": "根据关键字获取百科简要描述信息",
+                "order":3,
+                "inputs": [
+                    {
+                        "name": "keyword",
+                        "type": "string",
+                        "source": "baike_keyword"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "summary",
+                        "type": "string",
+                        "target": "baike_ret"
+                    }
+                ]
+            },
+            {
+                "class":"generator",
+                "id": "generate_0002",
+                "description": "根据百科描述回答用户的问题",
+                "order":4,
+                "inputs": [
+                    {
+                        "name": "description",
+                        "type": "string",
+                        "source": "baike_ret"
+                    },
+                    {
+                        "name": "question",
+                        "type": "string",
+                        "source": "q"
+                    }
+                ],
+                "outputs": [
+                    {
+                        "name": "answer",
+                        "type": "string",
+                        "target": "answer"
+                    }
+                ]
+            },
+        ]
+    }
+}
+
+File: prompts\task\task_0001.baidu_baike_answer.json
+====================
+{
+    "id": "task_0001",
+    "name": "baidu_baike_answer",
+    "description": "一个利用百度百科解释名词的任务，输入一个问题，返回答案",
+    "inputs": [
+        {
+            "name": "business_name",
+            "description": "行业名字",
+            "type": "string"
+        },
+        {
+            "name": "question",
+            "description": "一个关于名词解释的问题",
+            "type": "string"
+        }
+    ],
+    "process": {
+        "id": "process_0001",
+        "inputs": [
+            {
+                "name": "business_name",
+                "type": "string",
+                "source": "business_name"
+            },
+            {
+                "name": "question",
+                "type": "string",
+                "source": "question"
+            }
+        ],
+    }
+}
+
+File: prompts\tool\tool_00001.百度百科.json
+====================
+{
+    "id":"tool_0002",
+    "name":"百度百科",
+    "description":"根据关键词条，返回百度百科简介",
+    "input":[
+        {
+            "name": "keyword",
+            "type": "string",
+            "description":"需要查询百度百科词条"
+        }
+    ],
+    "output":[
+        {
+            "name":"summary",
+            "description":"百度百科对该词条简介，如果没有返回空字符串",
+            "type":"string"
+        },
+    ]
+}
+
+File: src\config.py
+====================
+# src/config.py
+
+import sys
+import os
+import json
+
+# 获取当前项目根目录
+root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# 添加源代码目录到 Python 解释器路径中
+# sys.path.insert(0, os.path.dirname(__file__))
+# 获取默认配置文件路径
+config_path = os.path.join(root_path,'config/default_config.json')
+# 从文件中加载 JSON 数据
+config_json = {}
+with open(config_path, 'r') as config_file:
+    config_json = json.load(config_file)
+# 获取 LOG 相关配置
+LOG_PATH = 'log/'
+LOG_MODE = 'debug'
+if 'log_config' in config_json:
+    if 'path' in config_json['log_config']:
+        LOG_PATH = config_json['log_config']['path']
+    if 'mode' in config_json['log_config']:
+        LOG_MODE = config_json['log_config']['mode']
+# 获取MongoDB 相关配置
+MONGO_CONFIG = {'host':'localhost', 'port':27017, 'username':None, 'password':None, 'db_name':'test'}
+if 'mongodb_config' in config_json:
+    MONGO_CONFIG = config_json['mongodb_config']
+
+File: src\main.py
+====================
+
+
+File: src\__init__.py
+====================
+
+
+File: src\engine\base\base.py
+====================
+# src/engine/base/base.py
+
+class Base:
+    def __init__(self, id, inputs, secret):
+        pass
+
+    def run(self):
+        """ 执行流程 """
+        raise NotImplementedError("Must implement run() method")
+
+File: src\engine\base\__init__.py
+====================
+
+
+File: src\engine\executor\executor.py
+====================
+# src/engine/executor/executor.py
+
+from ..base.base import Base
+
+class Executor(Base):
+    def __init__(self, id, inputs, secret):
+        super().__init__(id, inputs, secret)
+
+    def run(self):
+        """ 执行流程 """
+        raise NotImplementedError("Must implement run() method")
+
+File: src\engine\executor\__init__.py
+====================
+
+
+File: src\engine\executor\action\__init__.py
+====================
+
+
+File: src\engine\executor\generator\generator.py
+====================
+# src/engine/executor/generator/generator.py
+
+from ..executor import Executor
+
+class Generator(Executor):
+    def __init__(self, gen_id, inputs, secret):
+        super().__init__(gen_id, inputs, secret)
+
+    def run(self):
+        """ 执行流程 """
+        return {}
+
+File: src\engine\executor\generator\__init__.py
+====================
+
+
+File: src\engine\executor\tool\__init__.py
+====================
+
+
+File: src\engine\executor\tool\ calculate\__init__.py
+====================
+
+
+File: src\engine\executor\tool\web\__init__.py
+====================
+
+
+File: src\engine\scheduler\scheduler.py
+====================
+# src/engine/scheduler/scheduler.py
+
+from ..base.base import Base
+
+class Scheduler(Base):
+    def __init__(self, id, inputs, secret):
+        super().__init__(id, inputs, secret)
+
+    def run(self):
+        """ 执行流程 """
+        raise NotImplementedError("Must implement run() method")
+
+File: src\engine\scheduler\__init__.py
+====================
+
+
+File: src\engine\scheduler\ process\__init__.py
+====================
+
+
+File: src\engine\scheduler\task\task.py
+====================
+# src/engine/scheduler/task/task.py
+
+from ..scheduler import Scheduler
+
+class Task(Scheduler):
+    def __init__(self, t_id, inputs, secret):
+        super().__init__(t_id, inputs, secret)
+
+    def run(self):
+        """ 执行流程 """
+        return {'answer':'这个问题我不知道哦。'}
+
+File: src\engine\scheduler\task\__init__.py
+====================
+
+
+File: src\engine\utils\__init__.py
+====================
+
+
+File: src\services\logger\base_logger.py
+====================
+# src/services/logger/base_logger.py
+
+import os
+import logging
+from logging.handlers import TimedRotatingFileHandler
+
+from ...config import LOG_PATH,LOG_MODE
+
+# 基础日志类
+class BaseLogger:
+    def __init__(self, name='mindloom', level=logging.DEBUG):
+        # Create log directory if it doesn't exist
+        log_dir = LOG_PATH
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+        log_path = os.path.join(log_dir, '{}.log'.format(name))
+
+        self.logger = logging.getLogger(name)
+        self.logger.setLevel(level)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        
+        # Log to console
+        if LOG_MODE == 'debug':
+            console_handler = logging.StreamHandler()
+            console_handler.setFormatter(formatter)
+            self.logger.addHandler(console_handler)
+        
+        # Log to file with automatic rotation
+        if LOG_MODE == 'debug':
+            backup_count = 0
+        else:
+            backup_count = 180
+        file_handler = TimedRotatingFileHandler(log_path, when='midnight', interval=1, backupCount=backup_count)
+        file_handler.setFormatter(formatter)
+        self.logger.addHandler(file_handler)
+
+    def debug(self, message):
+        self.logger.debug(message)
+
+    def info(self, message):
+        self.logger.info(message)
+
+    def warning(self, message):
+        self.logger.warning(message)
+
+    def error(self, message):
+        self.logger.error(message)
+
+    def critical(self, message):
+        self.logger.critical(message)
+
+File: src\services\logger\__init__.py
+====================
+
+
+File: src\services\mongodb\mongodb.py
+====================
+# src/services/mongodb/mongodb.py
+
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
+import time
+
+from ...config import MONGO_CONFIG
+from ..logger.base_logger import BaseLogger
+
+class MongoDB:
+    def __init__(self):
+        self.logger = BaseLogger('mongodb')
+        self.host = MONGO_CONFIG['host']
+        self.port = MONGO_CONFIG['port']
+        self.username = MONGO_CONFIG['username']
+        self.password = MONGO_CONFIG['password']
+        self.db_name = MONGO_CONFIG['db_name']
+        self.client = None
+        self.db = None
+        self.connect_attempts = 3
+
+    def connect(self):
+        attempt = 1
+        while attempt <= self.connect_attempts:
+            try:
+                self.client = MongoClient(host=self.host, port=self.port, username=self.username, password=self.password)
+                self.db = self.client[self.db_name]
+                self.logger.info("Connected to MongoDB successfully!")
+                return
+            except ConnectionFailure as e:
+                self.logger.error(f"Attempt {attempt} failed to connect to MongoDB: {e}")
+                if attempt == self.connect_attempts:
+                    self.logger.error(f"Maximum attempts reached. Could not connect to MongoDB.")
+                    return
+                attempt += 1
+                time.sleep(2 ** attempt)  # Exponential backoff
+
+    def find_one(self, collection_name, query):
+        if self.client is None:
+            self.logger.info("Not connected to MongoDB! Attempting to reconnect...")
+            self.connect()
+
+        collection = self.db[collection_name]
+        try:
+            result = collection.find_one(query)
+            return result
+        except Exception as e:
+            self.logger.error(f"Failed to find document: {e}")
+
+
+File: src\services\mongodb\__init__.py
+====================
+
+
+File: src\services\rabbitmq\__init__.py
+====================
+
+
+File: tests\baselog_test.py
+====================
+# tests/baselog_test.py
+
+import unittest
+import sys
+import os
+
+# 添加源代码目录到 Python 解释器路径中
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.services.logger.base_logger import BaseLogger
+
+class TestLogger(unittest.TestCase):
+    def test_logging(self):
+        logger = BaseLogger('test_logger')
+        logger.debug('This is a debug message')
+        logger.info('This is an info message')
+        logger.warning('This is a warning message')
+        logger.error('This is an error message')
+        logger.critical('This is a critical message')
+
+if __name__ == '__main__':
+    unittest.main()
+    
+
+File: tests\generator_test.py
+====================
+# tests/generator_test.py
+
+import unittest
+import sys
+import os
+
+# 添加源代码目录到 Python 解释器路径中
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.engine.executor.generator.generator import Generator
+
+class TestGenerator(unittest.TestCase):
+    def test_run_case1(self):
+        t_id = 'generator_0001'
+        inputs = {}
+        secret = None
+
+        generator_instance = Generator(t_id, inputs, secret)
+        result = generator_instance.run()
+        print(result)
+
+        # 这里编写断言来验证 run 方法的输出是否符合预期
+        self.assertEqual(result, {})
+
+    def test_run_case2(self):
+        t_id = 'generator_0002'
+        inputs = {'name': 'haha'}
+        secret = None
+
+        generator_instance = Generator(t_id, inputs, secret)
+        result = generator_instance.run()
+        print(result)
+
+        # 这里编写断言来验证 run 方法的输出是否符合预期
+        # 示例断言，你需要根据具体情况调整
+        self.assertEqual(result, {})
+
+if __name__ == '__main__':
+    unittest.main()
+
+
+File: tests\task_test.py
+====================
+# tests/task_test.py
+
+import unittest
+import sys
+import os
+
+# 添加源代码目录到 Python 解释器路径中
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.engine.scheduler.task.task import Task
+
+class TestTask(unittest.TestCase):
+    def test_run_case1(self):
+        t_id = 'task_0001'
+        inputs = {}
+        secret = None
+
+        task_instance = Task(t_id, inputs, secret)
+        result = task_instance.run()
+        print(result)
+
+        # 这里编写断言来验证 run 方法的输出是否符合预期
+        self.assertEqual(result, {})
+
+    def test_run_case2(self):
+        t_id = 'task_0002'
+        inputs = {'name': 'haha'}
+        secret = None
+
+        task_instance = Task(t_id, inputs, secret)
+        result = task_instance.run()
+        print(result)
+
+        # 这里编写断言来验证 run 方法的输出是否符合预期
+        # 示例断言，你需要根据具体情况调整
+        self.assertEqual(result, {})
+
+if __name__ == '__main__':
+    unittest.main()
+
+
