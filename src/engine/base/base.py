@@ -4,8 +4,11 @@ import os
 from abc import ABC, abstractmethod
 from bson import ObjectId
 import json
-from ...config import TEMPLATE_LOAD_METHOD
 
+# 导入配置文件从而确定根路径
+from ...config import root_path
+# 从配置文件获取提示模板读入的方式
+from config import TEMPLATE_LOAD_METHOD
 if TEMPLATE_LOAD_METHOD == 'mongodb':
     from services.mongodb.mongodb import mongo_db
 elif TEMPLATE_LOAD_METHOD == 'file':
@@ -75,7 +78,7 @@ class Base:
         
         try:
             # 使用实例化的MongoDB类的find_data方法查找数据
-            data = mongo_db.find_data(index_name, {'_id': object_id})
+            data = mongo_db.find_one(index_name, {'_id': object_id})
             if not data:
                 raise FileNotFoundError(f"没有找到id为{id}的数据")
             
@@ -151,6 +154,17 @@ class Base:
                         param_name = item["name"]
                         raise self.TemplateError(f"'{key}'中的'{param_name}'的'type'不能是'{type_name}'。")
 
+    # 参数类型合法校验
+    @staticmethod
+    def validate_param_type(param_name,param_type,param_value):
+        # 类型检查
+        if param_type == 'string':
+            if not isinstance(param_value, str):
+                raise self.ValidationError(f"参数 {param_name} 应该是字符串。")
+        elif param_type == 'string-list':
+            if not isinstance(param_value, list) or not all(isinstance(item, str) for item in param_value):
+                raise self.ValidationError(f"参数 {param_name} 应该是一个字符串列表。")
+
     # 校验输入参数是否合法
     def validate_inputs(self, inputs):
         for template_input in self.template["inputs"]:
@@ -161,16 +175,15 @@ class Base:
             if param_name not in inputs:
                 raise self.ValidationError(f"缺少参数: {param_name}。")
             
-            # 类型检查
-            if param_type == 'string':
-                if not isinstance(inputs[param_name], str):
-                    raise self.ValidationError(f"参数 {param_name} 应该是字符串。")
-            elif param_type == 'string-list':
-                if not isinstance(inputs[param_name], list) or not all(isinstance(item, str) for item in inputs[param_name]):
-                    raise self.ValidationError(f"参数 {param_name} 应该是一个字符串列表。")
+            # 校验参数的类型
+            self.validate_param_type(param_name,param_type,inputs[param_name])
 
     # 从传入的inputs中给参数字典赋值
     def set_parameters_by_inputs(self, inputs):
+        # 如果提示模板规定输入变量是空值，不需要赋值
+        if self.template["inputs"] == None:
+            return
+        # 根据模板规定需要输入，在类内存空间添加相应变量
         for template_input in self.template["inputs"]:
             param_name = template_input["name"]
             self.parameters[param_name] = inputs[param_name]

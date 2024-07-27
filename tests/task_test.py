@@ -27,20 +27,7 @@ class TestTask(unittest.TestCase):
 
         print(result)
         # 这里编写断言来验证 run 方法的输出是否符合预期
-        # self.assertEqual(result, {})
-
-    # def test_run_case2(self):
-    #     t_id = 'task_0002'
-    #     inputs = {'name': 'haha'}
-    #     secret = None
-
-    #     task_instance = Task(t_id, inputs, secret)
-    #     result = task_instance.run()
-    #     print(result)
-
-    #     # 这里编写断言来验证 run 方法的输出是否符合预期
-    #     # 示例断言，你需要根据具体情况调整
-    #     self.assertEqual(result, {})
+        self.assertEqual(result, {'answer': '哈哈哈哈'})
 
 if __name__ == '__main__':
     unittest.main()

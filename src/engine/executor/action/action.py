@@ -1,9 +1,9 @@
-# src/engine/executor/generator/generator.py
+# src/engine/executor/action/action.py
 
 from ....config import root_path
 from src.engine.executor.executor import Executor
 
-class Generator(Executor):
+class Action(Executor):
     def __init__(self, id, secret):
         super().__init__(id, secret)
 
