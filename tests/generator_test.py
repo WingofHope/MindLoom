@@ -10,11 +10,11 @@ from src.engine.executor.generator.generator import Generator
 
 class TestGenerator(unittest.TestCase):
     def test_run_case1(self):
-        t_id = 'generator_0001'
+        gen_id = 'generator_0001'
         inputs = {}
         secret = None
 
-        generator_instance = Generator(t_id, inputs, secret)
+        generator_instance = Generator(gen_id, inputs, secret)
         result = generator_instance.run()
         print(result)
 

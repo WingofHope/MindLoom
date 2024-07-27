@@ -18,6 +18,7 @@ class MongoDB:
         self.client = None
         self.db = None
         self.connect_attempts = 3
+        self.connect()
 
     def connect(self):
         attempt = 1
@@ -35,6 +36,15 @@ class MongoDB:
                 attempt += 1
                 time.sleep(2 ** attempt)  # Exponential backoff
 
+    def get_collection(self, collection_name):
+        return self.db[collection_name]
+    
+    def insert_one(self, collection_name, document):
+        collection = self.get_collection(collection_name)
+        result = collection.insert_one(document)
+        self.logger.info(f"Inserted document with id {result.inserted_id}")
+        return result.inserted_id
+
     def find_one(self, collection_name, query):
         if self.client is None:
             self.logger.info("Not connected to MongoDB! Attempting to reconnect...")
@@ -46,3 +56,5 @@ class MongoDB:
             return result
         except Exception as e:
             self.logger.error(f"Failed to find document: {e}")
+
+mongo_db = MongoDB()
