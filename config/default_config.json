@@ -15,7 +15,8 @@
             "port": 27017,
             "username": "db_username",
             "password": "db_password",
-            "db_name": "db_name"
+            "db_name": "db_name",
+            "auth_source": "admin"
         }
     },
     "generate": {
