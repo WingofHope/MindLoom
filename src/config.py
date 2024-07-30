@@ -17,8 +17,15 @@ class Config:
         self.config = self.load_config()
 
     def load_config(self):
-        with open(self.config_path, 'r') as config_file:
-            return json.load(config_file)
+        try:
+            with open(self.config_path, 'r') as config_file:
+                return json.load(config_file)
+        except FileNotFoundError:
+            print(f"Configuration file not found: {self.config_path}")
+            return {}
+        except json.JSONDecodeError:
+            print(f"Error decoding JSON from the configuration file: {self.config_path}")
+            return {}
 
     def get(self, key, default=None):
         keys = key.split('.')
@@ -39,8 +46,11 @@ class Config:
         self.save_config()
 
     def save_config(self):
-        with open(self.config_path, 'w') as config_file:
-            json.dump(self.config, config_file, indent=4)
+        try:
+            with open(self.config_path, 'w') as config_file:
+                json.dump(self.config, config_file, indent=4)
+        except IOError as e:
+            print(f"Error saving configuration file: {e}")
 
 # Initialize the configuration
 config = Config()
@@ -49,11 +59,24 @@ config = Config()
 LOG_PATH = config.get('log_config.path', 'log/')
 LOG_MODE = config.get('log_config.mode', 'debug')
 
+# 添加 TEMPLATE_LOAD_METHOD 和 TEMPLATE_FILE_PATH
+TEMPLATE_LOAD_METHOD = config.get('prompts.default_source', 'file')
+TEMPLATE_FILE_PATH = os.path.join(root_path, config.get('prompts.file_config.file_path', 'prompts'))
+
+
 # 获取MongoDB 相关配置
-MONGO_CONFIG = {'host':'localhost', 'port':27017, 'username':None, 'password':None, 'db_name':'test'}
+MONGO_CONFIG = config.get('prompts.mongodb_config', {
+    'host': config.get('prompts.mongodb_config.host', 'localhost'),
+    'port': config.get('prompts.mongodb_config.port', 27017),
+    'username': os.getenv('MONGO_USERNAME', config.get('prompts.mongodb_config.username', None)),
+    'password': os.getenv('MONGO_PASSWORD', config.get('prompts.mongodb_config.password', None)),
+    'db_name': config.get('prompts.mongodb_config.db_name', 'test'),
+    'auth_source': config.get('prompts.mongodb_config.auth_source', 'admin')
+
+    })
 # if 'mongodb_config' in config_json:
 #     MONGO_CONFIG = config_json['mongodb_config']
 
 # Example usage
-# if __name__ == "__main__":
-#     print(config.get("随便来个database url"))
+if __name__ == "__main__":
+    print(config.get("随便来个database url","database"))
