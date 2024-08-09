@@ -26,13 +26,18 @@ class BaseLogger:
             self.logger.addHandler(console_handler)
         
         # Log to file with automatic rotation
-        if LOG_MODE == 'debug':
-            backup_count = 0
-        else:
-            backup_count = 180
+        # if LOG_MODE == 'debug':
+        #     backup_count = 0
+        # else:
+        #     backup_count = 180
+        backup_count = 0 if LOG_MODE == 'debug' else 180
+        
         file_handler = TimedRotatingFileHandler(log_path, when='midnight', interval=1, backupCount=backup_count)
         file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
+
+    def get_logger(self):
+        return self.logger
 
     def debug(self, message):
         self.logger.debug(message)
