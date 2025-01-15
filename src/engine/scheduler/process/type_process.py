@@ -11,13 +11,17 @@ class TypeProcess(ABC):
             super().__init__("Template 格式校验失败：")
             self.errors = errors
 
+    # 定义流程条件，选择分支和循环会用到
     CONDITION_OPERATIONS = [
         "equals", "notEquals", "greaterThan", "lessThan", "greaterThanOrEqual", "lessThanOrEqual", 
         "contains", "startsWith", "endsWith"
     ]
+
+    # 构造函数导入process实例
     def __init__(self, process_instance):
         self.process_instance = process_instance
 
+    # process函数调用转化本类函数——validate_template_call
     @staticmethod
     def validate_template_call(call_dict):
         # 调用 Scheduler 的 validate_template_call
@@ -27,14 +31,17 @@ class TypeProcess(ABC):
             # 如果发生异常，抛出 TypeProcess 中定义的 TemplateError
             raise TypeProcess.TemplateError(e.errors)
 
+    # 抽象校验执行模板，需子类实现
     @abstractmethod
     def validate_template_execution(execution):
         pass
 
+    # 抽象流程处理与执行函数，需子类实现
     @abstractmethod
     def process(self):
         pass
 
+    # 条件校验模板，封装提供子类使用
     @staticmethod
     def validate_template_condition(condition):
         errors = []  # 用于记录所有校验错误

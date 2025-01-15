@@ -32,13 +32,13 @@ class Scheduler(Base):
         # 把输入参数设置到类变量空间参数
         self.set_parameters_by_inputs(inputs)
         # 调度器类执行函数进行实施
-        self._process_execute()
+        self._scheduler_execute()
         # 从获取类变量空间参数获取输出参数
         outputs = self.get_outputs_by_parameters()
         return outputs
 
     # 子类实现的具体执行逻辑
-    def _process_execute():
+    def _scheduler_execute():
         pass
 
 ############## 提示模板相关逻辑 ##############
@@ -325,9 +325,8 @@ class Scheduler(Base):
         outputs = {}
         for template_output in self.template["outputs"]:
             param_name = template_output["name"]
-            if param_name not in self.parameters:
-                raise RuntimeError(f"缺少输出参数: {param_name}。")
-            outputs[param_name] = self.parameters[param_name]
+            if param_name in self.parameters:
+                outputs[param_name] = self.parameters[param_name]
         return outputs
 
 ############## 运行时处理逻辑 ##############

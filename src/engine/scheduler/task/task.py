@@ -13,7 +13,7 @@ class Task(Scheduler):
 ############## 运行时相关逻辑 ##############
 
     # 重写执行函数，Task直接调用call即可
-    def _process_execute(self):
+    def _scheduler_execute(self):
         # 设置主流程
         main_call = self.template["execution"]["call"]
         self._call_execute(main_call)

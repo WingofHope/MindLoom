@@ -5,7 +5,11 @@ from engine.scheduler.process.type_process import TypeProcess
 class Sequence(TypeProcess):
 ############## 运行时相关逻辑 ##############
     def process(self):
-        pass
+        # 获取所有顺行步骤
+        steps = self.process_instance.template["execution"]["steps"]
+        # 顺序调用_call_execute函数执行模板中的call
+        for step in steps:
+            self.process_instance._call_execute(step["call"])
 
 ############## 提示模板校验相关函数 ##############
 
