@@ -1,5 +1,7 @@
 # src/engine/scheduler/process/sequence.py
 
+import json
+
 from engine.scheduler.process.type_process import TypeProcess
 
 class Sequence(TypeProcess):
@@ -7,9 +9,21 @@ class Sequence(TypeProcess):
     def process(self):
         # 获取所有顺行步骤
         steps = self.process_instance.template["execution"]["steps"]
-        # 顺序调用_call_execute函数执行模板中的call
+        steps_len = len(steps)
+        parameters_json = json.dumps(self.process_instance.parameters,ensure_ascii=False)
+        self.process_instance.runtime_log.add_record(f"顺序执行流程开始，共 {steps_len} 个步骤，当前流程空间变量是 {parameters_json}。")
+        
+        # 顺序执行模板中的步骤
+        order = 1
         for step in steps:
+            # 记录步骤开始
+            self.process_instance.runtime_log.add_record(f"开始执行步骤 {order}。")
+            # 调用_call_execute函数执行模板中的call
             self.process_instance._call_execute(step["call"])
+            # 记录步骤执行完成的流程空间变量
+            parameters_json = json.dumps(self.process_instance.parameters,ensure_ascii=False)
+            self.process_instance.runtime_log.add_record(f"步骤 {order} 执行完毕，当前流程空间变量是 {parameters_json}。")
+            order += 1
 
 ############## 提示模板校验相关函数 ##############
 

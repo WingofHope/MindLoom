@@ -21,16 +21,6 @@ class TypeProcess(ABC):
     def __init__(self, process_instance):
         self.process_instance = process_instance
 
-    # process函数调用转化本类函数——validate_template_call
-    @staticmethod
-    def validate_template_call(call_dict):
-        # 调用 Scheduler 的 validate_template_call
-        try:
-            return Scheduler.validate_template_call(call_dict)
-        except Scheduler.TemplateError as e:
-            # 如果发生异常，抛出 TypeProcess 中定义的 TemplateError
-            raise TypeProcess.TemplateError(e.errors)
-
     # 抽象校验执行模板，需子类实现
     @abstractmethod
     def validate_template_execution(execution):
@@ -40,6 +30,17 @@ class TypeProcess(ABC):
     @abstractmethod
     def process(self):
         pass
+############## 提示模板校验相关逻辑 ##############
+
+    # 导入call模板校验函数
+    @staticmethod
+    def validate_template_call(call_dict):
+        # 调用 Scheduler 的 validate_template_call
+        try:
+            return Scheduler.validate_template_call(call_dict)
+        except Scheduler.TemplateError as e:
+            # 如果发生异常，抛出 TypeProcess 中定义的 TemplateError
+            raise TypeProcess.TemplateError(e.errors)
 
     # 条件校验模板，封装提供子类使用
     @staticmethod
@@ -96,4 +97,99 @@ class TypeProcess(ABC):
             raise TypeProcess.TemplateError(errors)
 
         return validated_condition
+
+############## 运行时执行相关逻辑 ##############
+
+    def evaluate_value_node(value_node):
+        """
+        评估值节点，返回实际值。
+        :param value_node: 包含 value_type 和 value 的字典
+        :return: 实际值
+        """
+        parameters = self.process_instance.parameters
+        if value_node["value_type"] == "variable":
+            var_name = value_node["value"]
+            if var_name not in parameters:
+                raise RuntimeError(f"变量 '{var_name}' 在参数中未定义。")
+            var_value = parameters[var_name]
+
+            # 检查变量的值是否为基本类型
+            if not isinstance(var_value, (int, float, str, list, bool)):
+                raise RuntimeError(f"变量 '{var_name}' 的值类型不支持: {type(var_value)}。")
+            return var_value
+
+        elif value_node["value_type"] == "constant":
+            return value_node["value"]
+        else:
+            raise RuntimeError(f"无效的 'value_type': {value_node['value_type']}。")
+
+    def evaluate_condition(self,condition):
+        """
+        递归评估条件是否成立。
+        :param condition: 条件的字典结构
+        :return: 条件是否成立 (True 或 False)
+        """
+        
+
+        # 判断是否为逻辑节点
+        if "type" in condition:
+            logic_type = condition["type"]
+            if logic_type not in ["and", "or"]:
+                raise RuntimeError(f"无效的逻辑类型: {logic_type}。")
+
+            if "conditions" not in condition or not isinstance(condition["conditions"], list):
+                raise RuntimeError(f"逻辑节点必须包含有效的 'conditions' 字段，并且它应该是一个数组。")
+
+            # 根据逻辑类型递归评估子条件
+            if logic_type == "and":
+                return all(evaluate_condition(sub_condition) for sub_condition in condition["conditions"])
+            elif logic_type == "or":
+                return any(evaluate_condition(sub_condition) for sub_condition in condition["conditions"])
+
+        # 判断是否为比较节点
+        elif "operation" in condition:
+            operation = condition["operation"]
+            valid_operations = [
+                "equals", "notEquals", "greaterThan", "lessThan", 
+                "greaterThanOrEqual", "lessThanOrEqual", 
+                "contains", "startsWith", "endsWith"
+            ]
+            if operation not in valid_operations:
+                raise RuntimeError(f"无效的比较操作符: {operation}。")
+
+            if "left" not in condition or "right" not in condition:
+                raise RuntimeError(f"比较节点必须包含 'left' 和 'right' 字段。")
+
+            # 计算左操作数和右操作数的值
+            left_value = evaluate_value_node(condition["left"])
+            right_value = evaluate_value_node(condition["right"])
+
+            # 根据操作符进行比较
+            if operation == "equals":
+                return left_value == right_value
+            elif operation == "notEquals":
+                return left_value != right_value
+            elif operation == "greaterThan":
+                return left_value > right_value
+            elif operation == "lessThan":
+                return left_value < right_value
+            elif operation == "greaterThanOrEqual":
+                return left_value >= right_value
+            elif operation == "lessThanOrEqual":
+                return left_value <= right_value
+            elif operation == "contains":
+                if not isinstance(left_value, (str, list)):
+                    raise RuntimeError(f"'contains' 操作的左操作数必须是字符串或数组。")
+                return right_value in left_value
+            elif operation == "startsWith":
+                if not isinstance(left_value, str):
+                    raise RuntimeError(f"'startsWith' 操作的左操作数必须是字符串。")
+                return left_value.startswith(right_value)
+            elif operation == "endsWith":
+                if not isinstance(left_value, str):
+                    raise RuntimeError(f"'endsWith' 操作的左操作数必须是字符串。")
+                return left_value.endswith(right_value)
+
+        else:
+            raise RuntimeError("条件对象缺少有效的 'type' 或 'operation' 字段。")
 
