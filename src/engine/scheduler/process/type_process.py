@@ -55,23 +55,28 @@ class TypeProcess(ABC):
 
         # 逻辑节点校验
         if "type" in condition:
+            # 校验Type字段
             if condition["type"] not in ["and", "or"]:
                 errors.append(f"逻辑节点 'type' 必须是 'and' 或 'or'。")
+            validated_condition["type"] = condition["type"]
+            # 校验条件列表字段
             if "conditions" not in condition or not isinstance(condition["conditions"], list):
                 errors.append(f"逻辑节点必须包含有效的 'conditions' 字段，并且它应该是一个数组。")
             else:
                 # 校验 'conditions' 中的每个元素
-                for sub_condition in condition["conditions"]:
+                validated_condition["conditions"] = list()
+                for sub_conditions in condition["conditions"]:
                     try:
-                        TypeProcess.validate_template_condition(sub_condition)  # 递归校验每个子条件
+                        validated_sub_conditions = TypeProcess.validate_template_condition(sub_conditions)  # 递归校验每个子条件
+                        validated_condition["conditions"].append(validated_sub_conditions)
                     except TemplateError as e:
                         errors.extend(e.errors)  # 将错误添加到总错误列表
-
         # 比较节点校验
         elif "operation" in condition:
+            # 校验操作数类型是否合法
             if condition["operation"] not in TypeProcess.CONDITION_OPERATIONS:
                 errors.append(f"比较操作 'operation' 的值无效。有效值为：{', '.join(TypeProcess.CONDITION_OPERATIONS)}。")
-
+            validated_condition["operation"] = condition["operation"]
             # 校验左侧和右侧的操作数
             if "left" not in condition or "right" not in condition:
                 errors.append(f"比较节点必须包含 'left' 和 'right' 字段。")
@@ -87,7 +92,11 @@ class TypeProcess(ABC):
                         value_type = condition[side]["value_type"]
                         if value_type not in ["variable", "constant"]:
                             errors.append(f"'{side}' 字段的 'value_type' 必须是 'variable' 或 'constant'。")
-                        # 这里可以根据具体的业务需求校验 value 是否符合规范，如类型检查
+                        
+                        # 校验 value 是否符合规范
+
+                validated_condition["left"] = condition["left"]
+                validated_condition["right"] = condition["right"]
 
         else:
             errors.append(f"条件对象缺少有效的 'type' 或 'operation' 字段。")
@@ -100,7 +109,7 @@ class TypeProcess(ABC):
 
 ############## 运行时执行相关逻辑 ##############
 
-    def evaluate_value_node(value_node):
+    def evaluate_value_node(self,value_node):
         """
         评估值节点，返回实际值。
         :param value_node: 包含 value_type 和 value 的字典
@@ -129,40 +138,23 @@ class TypeProcess(ABC):
         :param condition: 条件的字典结构
         :return: 条件是否成立 (True 或 False)
         """
-        
-
         # 判断是否为逻辑节点
         if "type" in condition:
             logic_type = condition["type"]
-            if logic_type not in ["and", "or"]:
-                raise RuntimeError(f"无效的逻辑类型: {logic_type}。")
-
-            if "conditions" not in condition or not isinstance(condition["conditions"], list):
-                raise RuntimeError(f"逻辑节点必须包含有效的 'conditions' 字段，并且它应该是一个数组。")
 
             # 根据逻辑类型递归评估子条件
             if logic_type == "and":
-                return all(evaluate_condition(sub_condition) for sub_condition in condition["conditions"])
+                return all(self.evaluate_condition(sub_condition) for sub_condition in condition["conditions"])
             elif logic_type == "or":
-                return any(evaluate_condition(sub_condition) for sub_condition in condition["conditions"])
+                return any(self.evaluate_condition(sub_condition) for sub_condition in condition["conditions"])
 
         # 判断是否为比较节点
         elif "operation" in condition:
             operation = condition["operation"]
-            valid_operations = [
-                "equals", "notEquals", "greaterThan", "lessThan", 
-                "greaterThanOrEqual", "lessThanOrEqual", 
-                "contains", "startsWith", "endsWith"
-            ]
-            if operation not in valid_operations:
-                raise RuntimeError(f"无效的比较操作符: {operation}。")
-
-            if "left" not in condition or "right" not in condition:
-                raise RuntimeError(f"比较节点必须包含 'left' 和 'right' 字段。")
 
             # 计算左操作数和右操作数的值
-            left_value = evaluate_value_node(condition["left"])
-            right_value = evaluate_value_node(condition["right"])
+            left_value = self.evaluate_value_node(condition["left"])
+            right_value = self.evaluate_value_node(condition["right"])
 
             # 根据操作符进行比较
             if operation == "equals":
@@ -189,7 +181,3 @@ class TypeProcess(ABC):
                 if not isinstance(left_value, str):
                     raise RuntimeError(f"'endsWith' 操作的左操作数必须是字符串。")
                 return left_value.endswith(right_value)
-
-        else:
-            raise RuntimeError("条件对象缺少有效的 'type' 或 'operation' 字段。")
-
