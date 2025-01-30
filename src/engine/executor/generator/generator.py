@@ -277,11 +277,12 @@ class Generator(Executor):
         elif not isinstance(extract["rules"], list):
             errors.append("Genetor 模版中 'template' -> 'extract' -> 'rules' 字段必须是一个列表。")
         elif output_names != None:
-            validated_extract["rules"] = []
+            validated_extract["rules"] = list()
 
             # 校验每个 rule 的 variable 是否在 outputs 中的 name 中
             rules_variables = []
             for rule in extract["rules"]:
+                validated_rule = dict()
                 if not isinstance(rule, dict):
                     errors.append("Genetor 模版中 'template' -> 'extract' 的每个 'rules' 元素必须是一个字典。")
                     continue
@@ -295,6 +296,7 @@ class Generator(Executor):
                     if variable not in output_names:
                         errors.append(f"Genetor 模版中 'template' -> 'extract' 中的 'variable' '{variable}' 必须与 'outputs' 中的字段一致。")
                     else:
+                        validated_rule["variable"] = variable
                         rules_variables.append(variable)
 
                 # 根据 mode 校验相应的提取方式
@@ -308,10 +310,15 @@ class Generator(Executor):
                             re.compile(rule["regex"])
                         except re.error:
                             errors.append(f"Genetor 模版中 'template' -> 'extract' 中 'regex' 字段的值 '{rule['regex']}' 不是有效的正则表达式。")
+                    validated_rule["regex"] = rule["regex"]
                 elif mode in ["json", "xml", "yaml"]:
                     if "path" not in rule:
                         errors.append(f"Genetor 模版中 'template' -> 'extract' 中 'mode' 为 '{mode}' 的规则必须包含 'path' 字段。")
-
+                    else:
+                        pass
+                    validated_rule["path"] = rule["path"]
+                # 添加校验通过的rule字段
+                validated_extract["rules"].append(validated_rule)
             # 校验 outputs 中的每个 name 是否在 rules 中找到对应的 variable
             for output_name in output_names:
                 if output_name not in rules_variables:
