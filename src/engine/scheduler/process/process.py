@@ -10,26 +10,31 @@ from engine.scheduler.process.loop import Loop
 from engine.scheduler.process.parallel import Parallel
 
 class Process(Scheduler):
+    # 定义各个流程类：顺行，分支选择，循环，并行
     PROCESS_TYPES_MAPPING = {
         'sequence': Sequence,
         'select': Select,
         'loop': Loop,
         'parallel': Parallel
     }
+    # 实例化流程类
+    process_instance = None
 
     def __init__(self, template_id, secret=None, task_id=None, parent_run_id=None):
         super().__init__(template_id, secret, task_id, parent_run_id)
         # 添加Process类到类映射中（这个代码有点别扭，没有更好的办法就这样弄了，待改进）
         self.EXECUTION_CLASS_MAPPING['process'] = Process
+        # 根据流程类型创建具体的流程类
+        ProcessType = Process.PROCESS_TYPES_MAPPING[self.template["execution"]["type"]]
+        self.process_instance = ProcessType(self)
 
 ############## 运行时相关逻辑 ##############
 
     # 重写执行函数，根据不同的流程调用不同的执行策略
-    def _process_execute(self):
-        # 设置主流程
-        pass
+    def _scheduler_execute(self):
+        # 调用不同流程类的process进行执行
+        self.process_instance.process()
         
-
 ############## 提示模板相关逻辑 ##############
 
     # 校验类函数直接复用父类
@@ -68,8 +73,8 @@ class Process(Scheduler):
 
         # 获取对应的流程类
         ProcessType = Process.PROCESS_TYPES_MAPPING[validated_execution["type"]]
+        
         # 具体流程类型校验其对应的模板
-
         try:
             validated_execution = ProcessType.validate_template_execution(execution)
         except ProcessType.TemplateError as e:

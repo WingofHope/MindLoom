@@ -1,11 +1,44 @@
 # src/engine/scheduler/process/select.py
 
+import json
+
 from engine.scheduler.process.type_process import TypeProcess
 
 class Select(TypeProcess):
 ############## 运行时相关逻辑 ##############
     def process(self):
-        pass
+        # 获取所有条件
+        cases = self.process_instance.template["execution"]["cases"]
+        cases_len = len(cases)
+        parameters_json = json.dumps(self.process_instance.parameters,ensure_ascii=False)
+        self.process_instance.runtime_log.add_record(f"分支流程判定开始，共 {cases_len} 条件判断分支流程，当前流程空间变量是 {parameters_json}。")
+        # 分支判断
+        for case in cases:
+            # 模版填写condition的情况
+            if "condition" in case:
+                try:
+                    # 获取判断是否命中
+                    ret = self.evaluate_condition(case["condition"])
+                except RuntimeError as re:
+                    self.process_instance.runtime_log.add_record(f"判断触发错误:{str(re)} 。")
+                    ret = False
+                except Exception as e:
+                    raise RuntimeError(f"条件判断触发未知错误: {str(e)}") from e
+                # 如果满足条件，调用_call_execute函数执行模板中的call
+                if ret:
+                    # 记录命中的条件
+                    con_json = json.dumps(case["condition"],ensure_ascii=False)
+                    self.process_instance.runtime_log.add_record(f"满足条件 {con_json} 开始执行。")
+                    # 调用_call_execute函数执行模板中的call
+                    self.process_instance._call_execute(case["call"])
+                    # 命中后跳出条件判断
+                    break
+            # 模板填写expression的情况
+            elif "expression" in case:
+                pass
+        # 记录分支执行完毕的情况
+        parameters_json = json.dumps(self.process_instance.parameters,ensure_ascii=False)
+        self.process_instance.runtime_log.add_record(f"分支流程执行完毕，当前流程空间变量是 {parameters_json}。")
 
 ############## 提示模板校验相关函数 ##############
 
