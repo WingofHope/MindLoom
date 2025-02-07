@@ -48,7 +48,7 @@ class Select(TypeProcess):
         errors = []  # 用于记录所有校验错误
         validated_execution = {}  # 用于存储验证通过的字段
 
-        # 验证 execution 类型是否是 "sequence"
+        # 验证 execution 类型是否是 "select"
         if execution.get("type") != "select":
             errors.append(f" 'execution' -> 'type' 字段必须是 'select'。")
         else:
