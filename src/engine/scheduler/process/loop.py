@@ -13,7 +13,7 @@ class Loop(TypeProcess):
         loop_type = execution["loop_type"]
 
         # 获取最大循环次数，是任务（配置文件）限制，循环体模板限制的最小值
-        max_loop_num = min(execution.get("max", 100), self.MAX_LOOP_COUNT)
+        max_loop_num = min(execution.get("max_loop_num", 100), self.MAX_LOOP_COUNT)
 
         count_num = 0
         iterable = list()
@@ -102,12 +102,12 @@ class Loop(TypeProcess):
         else:
             validated_execution["loop_type"] = execution["loop_type"]
 
-        # 验证 max 字段
-        max_value = execution.get("max", 100)
+        # 验证 max_loop_num 字段
+        max_value = execution.get("max_loop_num", 100)
         if not isinstance(max_value, int) or max_value <= 0:
-            errors.append("'execution' -> 'max' 字段必须是大于 0 的整数。")
+            errors.append("'execution' -> 'max_loop_num' 字段必须是大于 0 的整数。")
         else:
-            validated_execution["max"] = max_value
+            validated_execution["max_loop_num"] = max_value
 
         # 验证 condition 字段（仅当 loop_type 为 condition 时）
         if execution.get("loop_type") == "condition":
