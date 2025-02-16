@@ -26,4 +26,4 @@ class LocalTime:
             now = datetime.now(tz)
             return {"local_time": now.strftime("%Y-%m-%d %H:%M:%S %A %Z")}
         except Exception as e:
-            raise ValueError(f"Invalid timezone: {timezone}. Error: {e}")
+            raise RuntimeError(f"Invalid timezone: {timezone}. Error: {e}")

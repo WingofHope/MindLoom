@@ -9,3 +9,5 @@ venv/
 **/.code-workspace
 log/
 config/config.json
+config/secret.yaml
+

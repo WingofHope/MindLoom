@@ -95,27 +95,27 @@
             "rules": [
                 {
                     "variable": "thinking",
-                    "path": "//thinking/text()"
+                    "path": "./thinking/text()"
                 },
                 {
                     "variable": "is_weather_api",
-                    "path": "//is_weather_api/text()"
+                    "path": "./is_weather_api/text()"
                 },
                 {
                     "variable": "answer",
-                    "path": "//answer/text()"
+                    "path": "./answer/text()"
                 },
                 {
                     "variable": "location",
-                    "path": "//weather_api/location/text()"
+                    "path": "./weather_api/location/text()"
                 },
                 {
                     "variable": "start",
-                    "path": "//weather_api/start/text()"
+                    "path": "./weather_api/start/text()"
                 },
                 {
                     "variable": "days",
-                    "path": "//weather_api/days/text()"
+                    "path": "./weather_api/days/text()"
                 }
             ]
         }

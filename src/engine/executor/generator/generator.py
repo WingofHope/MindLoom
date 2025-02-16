@@ -1,6 +1,8 @@
 # src/engine/executor/generator/generator.py
 
 import re
+import yaml
+import os
 
 from config import root_path
 from engine.executor.executor import Executor
@@ -23,22 +25,102 @@ class Generator(Executor):
 
     # 重写执行方法
     def _execute(self, inputs):
-        if self.template_id == "generate_planning0001":
-            outputs = {
-                "thinking": "用户在北京出差，期望下班后去逛后海，因此这是一个活动出行类的问题。根据用户提供的时间（每天下班时间是18:00），需要为其推荐合适的活动行程规划。后海是适合晚上游玩的地方，可以考虑天气因素来判断最合适的出行时间。所以我需要查看接下来几天的天气情况，看哪天适合去。",
-                "is_weather_api": "是",
-                "answer": "稍等，我正在查阅后海的天气信息，以便给你推荐合适的出行时间和活动安排。",
-                "location": "Beijin",
-                "start": 0,
-                "days": 3,
-            }
+        # 读取密钥配置
+        self.secret = self._load_secret()
+        
+        # print("inputs: ", inputs)
+        print("template: ", self.template)
+
+        # 获取模板配置
+        llm_config = self.template["template"]["llm"]
+        post_body = self.template["template"]["post_body"]
+        parse_config = self.template["template"]["parse"]
+
+        # 处理模板变量替换
+        if parse_config["mode"] == "static" and isinstance(post_body, dict):
+            placeholder_format = parse_config["placeholder_format"]
+            post_body = self._replace_variables(post_body, inputs, placeholder_format)
+
+        # print("post_body: ", post_body)
+        # 发送请求到OpenAI API
+        import requests
+        try:
+            response = requests.post(
+                llm_config["url"],
+                headers={
+                    "Authorization": f"Bearer {self.secret}",
+                    "Content-Type": "application/json"
+                },
+                json=post_body,
+                timeout=30,
+                stream=False  # OpenAI API 支持流式响应，这里设置为 False
+            )
+            response.raise_for_status()
+            llm_response = response.json()
+            # print("llm_response:", llm_response)
+            
+            # 使用extract规则从响应中提取所需信息
+            extract_config = self.template["template"]["extract"]
+            outputs = self._extract_outputs(llm_response, extract_config)
+
+            print("outputs:", outputs)
             return outputs
-        elif self.template_id == "generate_planning0002":
-            outputs = {
-                "answer": "嘿，出差之余还想着后海浪一圈，懂享受！看天气，后天晴朗又不冷，最适合！下班后直接奔后海，7点到，先沿湖溜达拍夜景，再找家湖边小酒吧，热饮配夜风，倍儿惬意！带条围巾，别玩太晚，工作浪两不误！"
-            }
-            return outputs
-        return {}
+            
+        except requests.exceptions.RequestException as e:
+            raise RuntimeError(f"调用LLM API失败: {str(e)}")
+        except Exception as e:
+            raise RuntimeError(f"处理LLM响应失败: {str(e)}")
+
+    def _replace_variables(self, post_body, inputs, placeholder_format):
+        """替换post_body字典中的模板变量"""
+        result = {}
+        for key, value in post_body.items():
+            if isinstance(value, dict):
+                result[key] = self._replace_variables(value, inputs, placeholder_format)
+            elif isinstance(value, list):
+                result[key] = [
+                    self._replace_variables(item, inputs, placeholder_format) if isinstance(item, dict)
+                    else self._replace_string_variables(item, inputs, placeholder_format) if isinstance(item, str)
+                    else item
+                    for item in value
+                ]
+            elif isinstance(value, str):
+                result[key] = self._replace_string_variables(value, inputs, placeholder_format)
+            else:
+                result[key] = value
+        return result
+
+    def _replace_string_variables(self, text, inputs, placeholder_format):
+        """替换字符串中的模板变量"""
+        for var_name, var_value in inputs.items():
+            placeholder = placeholder_format.replace("variable", var_name)
+            if placeholder in text:
+                text = text.replace(placeholder, str(var_value))
+        return text
+
+    def _load_secret(self):
+        """从配置文件加载密钥"""
+        try:
+            # 获取项目根目录下的配置文件路径
+            config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))),
+                                     "config", 
+                                     "secret.yaml")
+            print("config_path:", config_path)
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+                
+            # 获取 API 密钥
+            if 'openai' not in config or 'api_key' not in config['openai']:
+                raise ValueError("配置文件中缺少 openai.api_key")
+                
+            return config['openai']['api_key']
+            
+        except FileNotFoundError:
+            raise RuntimeError("找不到配置文件 config/secret.yaml")
+        except yaml.YAMLError as e:
+            raise RuntimeError(f"解析配置文件失败: {str(e)}")
+        except Exception as e:
+            raise RuntimeError(f"读取密钥配置失败: {str(e)}")
 
 ############## 提示模板相关逻辑 ##############
 
@@ -338,3 +420,57 @@ class Generator(Executor):
             errors.append("Genetor 模版中 'template' -> 'assert_data' 字段必须是一个结构对象。")
             raise Generator.TemplateError(errors)
         return assert_data
+
+    def _extract_outputs(self, llm_response, extract_config):
+        """从LLM响应中提取输出"""
+        if extract_config["mode"] != "xml":
+            raise ValueError(f"暂不支持 {extract_config['mode']} 提取模式")
+        
+        try:
+            from lxml import etree
+            
+            # 从LLM响应中获取内容
+            content = llm_response.get("choices", [{}])[0].get("message", {}).get("content", "")
+            if not content:
+                raise ValueError("LLM响应中没有找到有效内容")
+
+            print("content:", content)
+            # 解析XML内容
+            # 将内容包装在根元素中，以处理可能的多个顶级元素
+            xml_content = f"<root>{content}</root>"
+            tree = etree.fromstring(xml_content.encode('utf-8'))
+            
+            # 找到 output 节点
+            output_node = tree.find("./output")
+            if output_node is None:
+                raise ValueError("在响应中没有找到 output 节点")
+            
+            # 存储提取结果
+            outputs = {}
+            
+            # 遍历规则进行提取
+            for rule in extract_config["rules"]:
+                variable = rule["variable"]
+                xpath = rule["path"]
+                
+                # 在 output 节点中使用 xpath 提取内容
+                elements = output_node.xpath(xpath)
+                
+                if elements:
+                    # 如果找到多个匹配，取第一个
+                    value = elements[0] if isinstance(elements[0], str) else elements[0].text
+                    # 处理可能的空值
+                    value = value.strip() if value else ""
+                    outputs[variable] = value
+                else:
+                    # 如果没有找到匹配，设置为空字符串
+                    outputs[variable] = ""
+                
+            return outputs
+            
+        except etree.XMLSyntaxError as e:
+            raise RuntimeError(f"XML解析错误: {str(e)}")
+        except etree.XPathEvalError as e:
+            raise RuntimeError(f"XPath解析错误: {str(e)}")
+        except Exception as e:
+            raise RuntimeError(f"提取输出时发生错误: {str(e)}")
