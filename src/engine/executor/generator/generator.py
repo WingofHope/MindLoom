@@ -41,7 +41,7 @@ class Generator(Executor):
             placeholder_format = parse_config["placeholder_format"]
             post_body = self._replace_variables(post_body, inputs, placeholder_format)
 
-        # print("post_body: ", post_body)
+        print("post_body: ", post_body)
         # 发送请求到OpenAI API
         import requests
         try:
@@ -52,12 +52,12 @@ class Generator(Executor):
                     "Content-Type": "application/json"
                 },
                 json=post_body,
-                timeout=30,
+                timeout=50,
                 stream=False  # OpenAI API 支持流式响应，这里设置为 False
             )
             response.raise_for_status()
             llm_response = response.json()
-            # print("llm_response:", llm_response)
+            print("llm_response:", llm_response)
             
             # 使用extract规则从响应中提取所需信息
             extract_config = self.template["template"]["extract"]
