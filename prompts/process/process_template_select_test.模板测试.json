@@ -1,0 +1,81 @@
+{
+    "id": "process_template_select_test",
+    "name": "模板测试",
+    "description": "用于模板测试选择流程。",
+    "inputs": [
+        {
+            "name": "input",
+            "description": "输入测试。",
+            "type": "string"
+        }
+    ],
+    "outputs":[
+        {
+            "name": "output",
+            "description": "输出测试。",
+            "type": "string"
+        }
+    ],
+    "execution":{
+        "type": "select",
+        "cases": [
+        {
+            "expression": "{input} == '地点'",
+            "condition":{
+                "type":"or",
+                "conditions":[
+                    {
+                        "operation": "equals",
+                        "left": { "value_type": "variable", "value": "input" },
+                        "right": { "value_type": "constant", "value": "地点" }
+                    },
+                    {
+                        "operation": "equals",
+                        "left": { "value_type": "variable", "value": "input" },
+                        "right": { "value_type": "constant", "value": "地" }
+                    }
+                    ]
+                },
+            "description": "获取当前地点信息。",
+            "call":{
+                "class": "tool",
+                "id": "local.local_address",
+                "inputs": [],
+                "outputs": [
+                    {
+                        "name": "local_address",
+                        "type": "string",
+                        "target": "output"
+                    }
+                ]
+            }
+        },
+        {
+            "expression": "{input} == '时间'",
+            "condition":{
+                "operation": "equals",
+                "left": { "value_type": "variable", "value": "input" },
+                "right": { "value_type": "constant", "value": "时间" }
+                },
+            "description": "获取当前的时间信息。",
+            "call":{
+                "class": "tool",
+                "id": "local.local_time",
+                "inputs": [
+                    {
+                        "name": "timezone",
+                        "type": "string",
+                        "value": "Asia/Shanghai"
+                    }],
+                "outputs": [
+                    {
+                        "name": "local_time",
+                        "type": "string",
+                        "target": "output"
+                    }
+                ]
+            }
+        }
+        ]
+    }
+}
