@@ -28,6 +28,7 @@
             {
                 "description": "获取当前位置描述",
                 "priority":1,
+                "time_out":5000,
                 "call":{
                     "class": "tool",
                     "id": "local.local_address",
@@ -44,6 +45,7 @@
             {
                 "description": "获取当前的时间信息",
                 "priority":2,
+                "time_out":500,
                 "call":{
                     "class": "tool",
                     "id": "local.local_time",

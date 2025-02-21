@@ -17,8 +17,8 @@ class TestTask(unittest.TestCase):
         try:
             tool_instance = Process(process_id, secret)
             print(tool_instance.get_template())
-            # result = tool_instance.run(inputs)
-            # print(result)
+            result = tool_instance.run(inputs)
+            print(result)
         except Process.TemplateError as e:
             print("模板验证失败，错误信息如下：")
             for error in e.errors:
