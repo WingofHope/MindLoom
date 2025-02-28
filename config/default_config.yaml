@@ -1,0 +1,78 @@
+# config/default_config.yaml
+# 
+# 这是默认的配置文件。如果存在 config/config.yaml 文件，程序将优先读取 config/config.yaml 文件，
+# 如果不存在，则会回退使用此默认配置文件。请根据需要修改此文件或创建一个 config/config.yaml 文件来覆盖默认配置。
+# 
+# 请确保修改时遵循相应的格式要求，详细的配置项说明请参见下面的注释。
+
+log_config:
+  # 日志输出的相关配置
+  mode: "debug"  # 可选值: "debug", "info", "warn", "error"
+  path: "log/"   # 日志文件存储的路径
+
+prompts:
+  # 配置提示模板相关设置
+  default_source: "localfile"  # 模板的保存和读取方式。可选值：localfile, mongodb。默认使用 localfile。
+  
+  # 本地文件读取相关配置
+  file_config:
+    file_path: "prompts/"  # 提示模板本地存放路径
+  
+  # MongoDB 默认配置
+  mongodb_config:
+    host: "localhost"  # MongoDB 主机，默认值为 localhost
+    port: 27017  # MongoDB 端口，0表示默认端口
+    username: ""  # MongoDB 用户名，默认为空
+    password: ""  # MongoDB 密码，默认为空
+    db_name: "prompts"  # MongoDB 数据库名称，默认为空
+    auth_source: ""  # MongoDB 认证源，默认为空
+    connection_string: "mongodb://localhost:27017/prompts"  # 连接字符串
+
+# 配置生成器的设置
+generator:
+  llm:
+    - "gpt"  # 支持的生成模型：GPT
+    - "baichuan2"  # 支持的生成模型：Baichuan2
+
+actions:
+  # 配置操作调用方式
+  default_mode: "rabbitmq"  # 默认操作模式，当前支持：localfile, REST_API, rabbitmq
+  type:
+    - "Synchronous"  # 同步
+    - "asynchronous"  # 异步
+    - "callback"  # 回调
+  REST_API_config:
+    url: "http://localhost/mindloom_action"  # 默认 REST API URL
+    headers:
+      Authorization: "Bearer <API_TOKEN>"  # API 认证 token
+  rabbitmq:
+    username: "guest"  # RabbitMQ 用户名
+    password: "guest"  # RabbitMQ 密码
+    host: "localhost"  # RabbitMQ 主机
+    port: 5672  # RabbitMQ 端口
+
+tools:
+  # 配置工具的定义
+  default_define: "local"  # 默认工具定义为本地
+  local_define:
+    file_path: "src/engine/executor/tool/tools"  # 工具文件存放路径
+
+performance:
+  # 引擎性能配置
+  task:
+    max_threads: 10  # 最大进程数
+    max_executor_timeout: 6000  # 最大执行超时秒数
+
+  process:
+    sequential:
+      max_unit: 10  # 顺序执行最大单位数
+      max_executor_timeout: 600  # 最大执行超时秒数
+    parallel:
+      max_threads: 5  # 并行执行最大线程数
+      max_executor_timeout: 60  # 最大执行超时秒数
+    select:
+      max_branch: 10  # 最大分支数
+      max_executor_timeout: 60  # 最大执行超时秒数
+    loop:
+      max_loop_num: 100  # 最大循环次数
+      max_executor_timeout: 60  # 最大执行超时秒数
