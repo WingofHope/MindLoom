@@ -17,14 +17,17 @@ class Action(Executor):
     
     # 执行流程
     def _execute(self, inputs):
-        # 测试样例，需要删除
-        if self.id == "action_weather0001":
-            outputs = {
-                "weather_result": "{\"results\":[{\"location\":{\"id\":\"WX4FBXXFKE4F\",\"name\":\"北京\",\"country\":\"CN\",\"path\":\"北京,北京,中国\",\"timezone\":\"Asia/Shanghai\",\"timezone_offset\":\"+08:00\"},\"daily\":[{\"date\":\"2024-12-03\",\"text_day\":\"晴\",\"code_day\":\"0\",\"text_night\":\"多云\",\"code_night\":\"4\",\"high\":\"9\",\"low\":\"-3\",\"rainfall\":\"0.00\",\"precip\":\"0.00\",\"wind_direction\":\"西南\",\"wind_direction_degree\":\"225\",\"wind_speed\":\"8.4\",\"wind_scale\":\"2\",\"humidity\":\"47\"},{\"date\":\"2024-12-04\",\"text_day\":\"多云\",\"code_day\":\"4\",\"text_night\":\"晴\",\"code_night\":\"1\",\"high\":\"8\",\"low\":\"-2\",\"rainfall\":\"0.00\",\"precip\":\"0.00\",\"wind_direction\":\"西南\",\"wind_direction_degree\":\"225\",\"wind_speed\":\"8.4\",\"wind_scale\":\"2\",\"humidity\":\"43\"},{\"date\":\"2024-12-05\",\"text_day\":\"晴\",\"code_day\":\"0\",\"text_night\":\"多云\",\"code_night\":\"4\",\"high\":\"9\",\"low\":\"-1\",\"rainfall\":\"0.00\",\"precip\":\"0.00\",\"wind_direction\":\"西北\",\"wind_direction_degree\":\"315\",\"wind_speed\":\"3.0\",\"wind_scale\":\"1\",\"humidity\":\"59\"}],\"last_update\":\"2024-12-03T08:00:00+08:00\"}]}"
-            }
-            return outputs
-        # 测试样例，需要删除
+        if self.commu_mode == "rabbitmq":
+            return self._execute_rabbitmq(inputs)
+        elif self.commu_mode == "localfile":
+            return self._execute_localfile(inputs)
+        elif self.commu_mode == "restapi":
+            return self._execute_restapi(inputs)
+        else:
+            raise ValueError(f"不支持的通信模式: {self.commu_mode}")
 
+    def _execute_rabbitmq(self, inputs):
+        """通过RabbitMQ消息队列处理请求"""
         correlation_id = str(uuid.uuid4())
         request_message = json.dumps({
             "id": self.id,
@@ -45,7 +48,7 @@ class Action(Executor):
             
             response_data = json.loads(response)
             if response_data.get('correlation_id') == correlation_id:
-                return json.loads(response_data['output'])  # 返回解码后的输出数据
+                return json.loads(response_data['output'])
             else:
                 self.mq_client.send_one_msg('response_queue', response)
 
@@ -55,3 +58,80 @@ class Action(Executor):
             time.sleep(1)
 
         raise RuntimeError(f"没有接收到Action返回。")
+
+    def _execute_localfile(self, inputs):
+        """通过本地文件处理请求"""
+        import os
+        import time
+        
+        # 定义请求和响应文件路径
+        request_file = os.path.join(root_path, "tmp", "action_request.json")
+        response_file = os.path.join(root_path, "tmp", "action_response.json")
+        
+        # 确保tmp目录存在
+        os.makedirs(os.path.dirname(request_file), exist_ok=True)
+        
+        # 生成唯一的correlation_id
+        correlation_id = str(uuid.uuid4())
+        request_message = {
+            "id": self.id,
+            "inputs": inputs,
+            "correlation_id": correlation_id
+        }
+        
+        # 写入请求文件
+        with open(request_file, 'w', encoding='utf-8') as f:
+            json.dump(request_message, f)
+        
+        # 等待响应
+        timeout = 30
+        start_time = time.time()
+        
+        while True:
+            if os.path.exists(response_file):
+                try:
+                    with open(response_file, 'r', encoding='utf-8') as f:
+                        response_data = json.load(f)
+                        if response_data.get('correlation_id') == correlation_id:
+                            # 清理文件
+                            os.remove(response_file)
+                            return json.loads(response_data['output'])
+                except (json.JSONDecodeError, FileNotFoundError):
+                    pass
+            
+            if time.time() - start_time > timeout:
+                raise RuntimeError("action本地文件处理超时")
+                
+            time.sleep(1)
+
+    def _execute_restapi(self, inputs):
+        """通过REST API处理请求"""
+        import requests
+        
+        # 假设API端点配置在某处定义
+        api_endpoint = "http://localhost:8000/action"  # 这里需要替换为实际的API端点
+        
+        correlation_id = str(uuid.uuid4())
+        request_data = {
+            "id": self.id,
+            "inputs": inputs,
+            "correlation_id": correlation_id
+        }
+        
+        try:
+            response = requests.post(
+                api_endpoint,
+                json=request_data,
+                timeout=30,
+                headers={"Content-Type": "application/json"}
+            )
+            response.raise_for_status()
+            
+            response_data = response.json()
+            if response_data.get('correlation_id') == correlation_id:
+                return json.loads(response_data['output'])
+            else:
+                raise RuntimeError("收到的响应correlation_id不匹配")
+            
+        except requests.exceptions.RequestException as e:
+            raise RuntimeError(f"REST API请求失败: {str(e)}")

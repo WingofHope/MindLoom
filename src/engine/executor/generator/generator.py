@@ -33,6 +33,15 @@ class Generator(Executor):
 
         # 获取模板配置
         llm_config = self.template["template"]["llm"]
+        
+        # 根据mode选择不同的处理逻辑
+        if llm_config["mode"] == "embedding":
+            return self._handle_embedding_mode(llm_config, inputs)
+        else:
+            return self._handle_normal_mode(llm_config, inputs)
+
+    def _handle_normal_mode(self, llm_config, inputs):
+        """处理非embedding模式的请求"""
         post_body = self.template["template"]["post_body"]
         parse_config = self.template["template"]["parse"]
 
@@ -43,6 +52,7 @@ class Generator(Executor):
 
         print("post_body: ", post_body)
         self.runtime_log.add_record(f"发送给 llm 的 post_body 是 {post_body} 。")
+        
         # 发送请求到OpenAI API
         import requests
         try:
@@ -72,6 +82,39 @@ class Generator(Executor):
             raise RuntimeError(f"调用LLM API失败: {str(e)}")
         except Exception as e:
             raise RuntimeError(f"处理LLM响应失败: {str(e)}")
+
+    def _handle_embedding_mode(self, llm_config, inputs):
+        """处理embedding模式的请求"""
+        # TODO: 实现embedding模式的处理逻辑
+        import requests
+        try:
+            # 构建embedding请求的post body
+            post_body = {
+                "input": inputs.get("text", ""),  # 假设输入中有一个text字段
+                "model": llm_config.get("model", "text-embedding-ada-002")  # 使用配置中的模型或默认值
+            }
+
+            response = requests.post(
+                llm_config["url"],
+                headers={
+                    "Authorization": f"Bearer {self.secret}",
+                    "Content-Type": "application/json"
+                },
+                json=post_body,
+                timeout=50
+            )
+            response.raise_for_status()
+            embedding_response = response.json()
+            
+            # 从响应中提取embedding向量
+            embedding_vector = embedding_response.get("data", [{}])[0].get("embedding", [])
+            
+            return {"embedding": embedding_vector}
+            
+        except requests.exceptions.RequestException as e:
+            raise RuntimeError(f"调用Embedding API失败: {str(e)}")
+        except Exception as e:
+            raise RuntimeError(f"处理Embedding响应失败: {str(e)}")
 
     def _replace_variables(self, post_body, inputs, placeholder_format):
         """替换post_body字典中的模板变量"""
