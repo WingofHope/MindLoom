@@ -29,7 +29,7 @@ class Generator(Executor):
         self.secret = self._load_secret()
         
         # print("inputs: ", inputs)
-        print("template: ", self.template)
+        self.runtime_log.add_record(f"template 是 {self.template} 。")
 
         # 获取模板配置
         llm_config = self.template["template"]["llm"]
@@ -42,6 +42,7 @@ class Generator(Executor):
             post_body = self._replace_variables(post_body, inputs, placeholder_format)
 
         print("post_body: ", post_body)
+        self.runtime_log.add_record(f"发送给 llm 的 post_body 是 {post_body} 。")
         # 发送请求到OpenAI API
         import requests
         try:
@@ -58,12 +59,13 @@ class Generator(Executor):
             response.raise_for_status()
             llm_response = response.json()
             print("llm_response:", llm_response)
+            self.runtime_log.add_record(f"llm 的输出是 {llm_response} 。")
             
             # 使用extract规则从响应中提取所需信息
             extract_config = self.template["template"]["extract"]
             outputs = self._extract_outputs(llm_response, extract_config)
 
-            print("outputs:", outputs)
+            self.runtime_log.add_record(f"根据extract规则从响应中提取的信息是 {outputs} 。")
             return outputs
             
         except requests.exceptions.RequestException as e:
