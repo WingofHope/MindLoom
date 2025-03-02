@@ -11,13 +11,15 @@ import time
 class Action(Executor):
     def __init__(self, template_id, secret=None, task_id=None, parent_run_id=None):
         super().__init__(template_id, secret, task_id, parent_run_id)
-        parameters = load_mq_config_parameters()
-        self.mq_client = NoneBlockingMQClient(parameters)
         self.lock = threading.Lock()  # 使用线程锁来确保线程安全
+
+        self.commu_mode = "localfile"
     
     # 执行流程
     def _execute(self, inputs):
         if self.commu_mode == "rabbitmq":
+            parameters = load_mq_config_parameters()
+            self.mq_client = NoneBlockingMQClient(parameters)
             return self._execute_rabbitmq(inputs)
         elif self.commu_mode == "localfile":
             return self._execute_localfile(inputs)
