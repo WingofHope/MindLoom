@@ -463,11 +463,27 @@ class Generator(Executor):
                     value = elements[0] if isinstance(elements[0], str) else elements[0].text
                     # 处理可能的空值
                     value = value.strip() if value else ""
+                    
+                    # 根据outputs定义的类型进行转换
+                    output_type = next((output["type"] for output in self.template["outputs"] if output["name"] == variable), None)
+                    if output_type:
+                        if output_type == "number":
+                            try:
+                                value = float(value) if '.' in value else int(value)
+                            except ValueError:
+                                # 如果转换失败，使用默认值
+                                default_value = next((output.get("default", 0) for output in self.template["outputs"] if output["name"] == variable), 0)
+                                value = default_value
+                        elif output_type == "string":
+                            value = str(value)
+                        # 可以根据需要添加其他类型的转换
+                    
                     outputs[variable] = value
                 else:
-                    # 如果没有找到匹配，设置为空字符串
-                    outputs[variable] = ""
-                
+                    # 如果没有找到匹配，使用默认值
+                    default_value = next((output.get("default", "") for output in self.template["outputs"] if output["name"] == variable), "")
+                    outputs[variable] = default_value
+            
             return outputs
             
         except etree.XMLSyntaxError as e:
