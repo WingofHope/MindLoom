@@ -7,7 +7,9 @@ import pika
 import json
 import threading
 from services.logger.base_logger import BaseLogger
-from config import RABBITMQ_CONFIG
+from config import config
+
+RABBITMQ_CONFIG = config.get("actions.rabbitmq")
 
 logger = BaseLogger("rabbitmq")
 

@@ -7,12 +7,12 @@
 
 log_config:
   # 日志输出的相关配置
-  mode: "debug"  # 可选值: "debug", "info", "warn", "error"
+  level: "debug"  # 可选值: "debug", "info", "warn", "error"
   path: "log/"   # 日志文件存储的路径
 
 prompts:
   # 配置提示模板相关设置
-  default_source: "localfile"  # 模板的保存和读取方式。可选值：localfile, mongodb。默认使用 localfile。
+  template_mode: "localfile"  # 模板的保存和读取方式。可选值：localfile, mongodb。默认使用 localfile。
   
   # 本地文件读取相关配置
   file_config:
@@ -28,17 +28,29 @@ prompts:
     auth_source: ""  # MongoDB 认证源，默认为空
     connection_string: "mongodb://localhost:27017/prompts"  # 连接字符串
 
-# 配置生成器的设置
-generator:
-  llm:
-    - "gpt"  # 支持的生成模型：GPT
-    - "baichuan2"  # 支持的生成模型：Baichuan2
+runtime_log:
+  # 运行时日志输出相关配置
+  log_mode: "localfile" #运行时日志存储方式。可选值：localfile, mongodb。默认使用 localfile。
+
+  # 本地文件读取相关配置
+  file_config:
+    file_path: "log/runtime_log/"  # 提示模板本地存放路径
+
+  # MongoDB 默认配置
+  mongodb_config:
+    host: "localhost"  # MongoDB 主机，默认值为 localhost
+    port: 27017  # MongoDB 端口，0表示默认端口
+    username: ""  # MongoDB 用户名，默认为空
+    password: ""  # MongoDB 密码，默认为空
+    db_name: "runtime_log"  # MongoDB 数据库名称，默认为空
+    auth_source: ""  # MongoDB 认证源，默认为空
+    connection_string: "mongodb://localhost:27017/runtime_log"  # 连接字符串
 
 actions:
   # 配置操作调用方式
-  default_mode: "rabbitmq"  # 默认操作模式，当前支持：localfile, REST_API, rabbitmq
+  action_mode: "rabbitmq"  # 操作调用方式。当前支持：localfile, REST_API, rabbitmq
   type:
-    - "Synchronous"  # 同步
+    - "synchronous"  # 同步
     - "asynchronous"  # 异步
     - "callback"  # 回调
   REST_API_config:

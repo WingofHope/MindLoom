@@ -3,21 +3,15 @@
 import os
 import json
 
-# 从配置文件获取提示模板读入的方式
-from config import TEMPLATE_LOAD_METHOD
-if TEMPLATE_LOAD_METHOD == 'mongodb':
-    from services.mongodb.mongodb import mongo_db
-elif TEMPLATE_LOAD_METHOD == 'file':
-    from config import TEMPLATE_FILE_PATH
-
-from engine.executor.tool.tool_manager import tool_manager
+from config import config
 
 class TemplateLoader:
     # 从本地文件读取提示模板方法
     @staticmethod
     def load_template_by_file(folder_name, template_id):
         # 生成完整文件夹路径名字
-        folder_path = os.path.join(TEMPLATE_FILE_PATH, folder_name)
+        template_file_path = config.get("prompts.file_config.file_path","prompts/")
+        folder_path = os.path.join(template_file_path, folder_name)
 
         try:
             # 确认文件夹路径存在
@@ -62,6 +56,7 @@ class TemplateLoader:
     # 调用工具管理器加载工具模板
     @staticmethod
     def load_tools_template(tool_id):
+        from engine.executor.tool.tool_manager import tool_manager
         return tool_manager.get_metadata(tool_id)
 
     # 读取提示模板函数
@@ -72,18 +67,17 @@ class TemplateLoader:
             return TemplateLoader.load_tools_template(template_id)
 
         # 如果是任务、流程、操作或AI生成类则根据配置文件加载模板
+        template_load_method = config.get("prompts.template_load_method","localfile")
         try:
             # 从本地文件夹读取模板
-            if TEMPLATE_LOAD_METHOD == 'file':
+            if template_load_method == 'localfile':
                 return TemplateLoader.load_template_by_file(class_name, template_id)
-            
             # 从MongoDB中读取模板
-            elif TEMPLATE_LOAD_METHOD == 'mongodb':
+            elif template_load_method == 'mongodb':
                 return TemplateLoader.load_template_by_mongodb(class_name, template_id)
-            
             else:
                 # 如果加载方法配置无效，抛出异常
-                raise ValueError(f"无效的模版加载类型: {TEMPLATE_LOAD_METHOD}，请检查配置文件 prompts->default_source 项。")
+                raise ValueError(f"无效的模版加载类型: {template_load_method}，请检查配置文件 prompts->template_load_method 项。")
                 
         except Exception as e:
             # 抛出其他未预见的异常，保留原始异常上下文

@@ -1,6 +1,5 @@
 # src/engine/executor/executor.py
 
-from config import root_path
 from engine.base.base import Base
 
 class Executor(Base):

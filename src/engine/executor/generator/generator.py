@@ -4,7 +4,6 @@ import re
 import yaml
 import os
 
-from config import root_path
 from engine.executor.executor import Executor
 
 class Generator(Executor):

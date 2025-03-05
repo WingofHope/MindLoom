@@ -1,6 +1,6 @@
 # src/engine/executor/tool/tool.py
 
-from config import root_path
+from config import config
 from engine.executor.executor import Executor
 from engine.executor.tool.tool_manager import tool_manager as tm
 

@@ -23,7 +23,6 @@ class Config:
                 # 使用 yaml.safe_load 来加载 YAML 文件
                 return yaml.safe_load(config_file) or {}
         except (FileNotFoundError, yaml.YAMLError) as e:
-            print(f"加载配置时出错: {e}")
             return {}
 
     def get(self, key, default=None):
@@ -53,7 +52,7 @@ class Config:
                 # 使用 yaml.dump 保存配置，丢弃注释
                 yaml.dump(self.config, config_file, allow_unicode=True, default_flow_style=False)
         except IOError as e:
-            print(f"保存配置文件时出错: {e}")
+            pass
 
 # 初始化配置
 config = Config()
