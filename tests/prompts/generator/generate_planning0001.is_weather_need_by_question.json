@@ -1,0 +1,123 @@
+{
+    "id": "generate_planning0001",
+    "name": "is_weather_need_by_question",
+    "description": "用户问题的第一步思考，判断是否出行问题，根据用户的问题决定是否需要调用天气API。",
+    "inputs": [
+        {
+            "name": "question",
+            "type": "string",
+            "description": "使用天气行程助手的用户的问题。"
+        },
+        {
+            "name": "GNSS_address",
+            "type": "string",
+            "description": "本地地址信息。"
+        },
+        {
+            "name": "local_time_string",
+            "type": "string",
+            "description": "时间描述字符串。"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "thinking",
+            "description": "第一次根据问题的思考过程的记录。",
+            "type": "string"
+        },
+        {
+            "name": "is_weather_api",
+            "description": "第一次思考作出是否需要天气API的判断，如果值是“是”，表示需要调用API后才能回复。",
+            "type": "string"
+        },
+        {
+            "name": "answer",
+            "description": "第一次思考给出的回复答案。",
+            "type": "string"
+        },
+        {
+            "name": "location",
+            "description": "调用天气API需要的参数，代表位置信息，是英文城市名。",
+            "type": "string"
+        },
+        {
+            "name": "start",
+            "description": "调用天气API需要的参数，代表起始时间，默认值是0，表示今天。-1表示昨天",
+            "type": "number",
+            "default":0
+        },
+        {
+            "name": "days",
+            "description": "调用天气API需要的参数，代表需要获取天气的天数，默认值1只获取1天。",
+            "type": "number",
+            "default":3
+        }
+    ],
+    "template": {
+        "llm": {
+            "mode": "chat",
+            "provider": "彩虹之眼",
+            "model": "gpt-4o",
+            "version": "v1",
+            "url": "https://gitaigc.com/v1/chat/completions"
+        },
+        "parse": {
+            "mode": "static",
+            "placeholder_format": "{{variable}}"
+        },
+        "post_body": {
+            "model": "gpt-4o-mini",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "【标题】《天气出行助手》\n【任务】根据用户输入的问题，结合地点、时间、天气数据三个信息，提供合适活动行程规划。\n【输入格式】xml格式<question>代表用户输入，<local_time>代表本地服务器收到用户输入的时间，<GNSS_address>代表获取用户GNSS转化的地址。\n【输出格式】xml格式<thinking>代表思考过程，<is_weather>代表是否需要调用知心天气API，值“是”表示需要<weather_api>包裹知心天气API的如下三个关键参数：<location>英文地址<start>返回天气开始的日子，值0代表今天，值-1代表昨天，值1代表明天<days>需要获取天气的天数，值1代表1天，当前使用的免费API最多获取未来3天的情况，<answer>代表输出给到用户的话术。\n【分析步骤】在获取问题或者任务后，开始使用<thinking>标签输出思考过程，思考过程首先判断是否是活动出行类问题，如果不是出行类问题，直接在<answer>标签提供回复话术礼貌委婉表达不适合回答。如果属于活动出行类问题，分析用户时间和地点，如果用户没有给出，参考本地服务器收到问题的时间，GNSS获得的地点默认是用户所在地点。结合时间地点和问题，判断是否需要调用知心天气的API接口获取天气预报情况，如果不需要天气信息，<is_weather>值为“否”，在<answer>标签输出推荐的活动行程规划。如果需要天气信息，<is_weather>值为“是”，<weather_api>标签给到需要查询的参数，且在<answer>告知用户稍等查阅天气信息。"
+                },
+                {
+                    "role": "user",
+                    "content": "<input><local_time>2024-12-02 18:34:24 Monday UTC+08:00+0800</local_time>\n<GNSS_address>北京市昌平区回龙观龙跃苑二区</<GNSS_address>>\n<question>我在北京出差，会待一周，每天晚上6点下班，希望下班去逛后海，有啥推荐吗?哪天去合适？</question></input>"
+                },
+                {
+                    "role": "assistant",
+                    "content": "<output><thinking>用户在北京出差，期望下班后去逛后海，因此这是一个活动出行类的问题。根据用户提供的时间（每天下班时间是18:00），需要为其推荐合适的活动行程规划。后海是适合晚上游玩的地方，可以考虑天气因素来判断最合适的出行时间。所以我需要查看接下来几天的天气情况，看哪天适合去。</thinking>\n<is_weather>是</is_weather>\n<weather_api>\n<location>Beijing</location>\n<start>0</start>\n<days>3</days>\n</weather_api>\n<answer>稍等，我正在查阅后海的天气信息，以便给你推荐合适的出行时间和活动安排。</answer></output>"
+                },
+                {
+                    "role": "user",
+                    "content": "<input><local_time>{{local_time_string}}</local_time>\n<GNSS_address>{{GNSS_address}}</<GNSS_address>>\n<question>{{question}}</question></input>"
+                }
+            ]
+        },
+        "assert": {
+            "finish_reason" : "stop",
+            "choices_length": 1
+        },
+        "extract": {
+            "mode": "xml", 
+            "rules": [
+                {
+                    "variable": "thinking",
+                    "path": "./thinking/text()"
+                },
+                {
+                    "variable": "is_weather_api",
+                    "path": "./is_weather_api/text()"
+                },
+                {
+                    "variable": "answer",
+                    "path": "./answer/text()"
+                },
+                {
+                    "variable": "location",
+                    "path": "./weather_api/location/text()"
+                },
+                {
+                    "variable": "start",
+                    "path": "./weather_api/start/text()"
+                },
+                {
+                    "variable": "days",
+                    "path": "./weather_api/days/text()"
+                }
+            ]
+        }
+    }
+}

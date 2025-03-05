@@ -1,0 +1,110 @@
+{
+    "id": "process_planning0002",
+    "name": "trip_schedule_switch",
+    "description": "根据问题初步分析的决定是否，执行直接回复或执行天气获取操作后生成推荐方案。",
+    "inputs": [
+        {
+            "name": "question",
+            "description": "一个用户关于出行计划的问题。",
+            "type": "string"
+        },
+        {
+            "name": "city_name",
+            "description": "通过Tool获得的本地城市名。",
+            "type": "string"
+        },
+        {
+            "name": "thinking",
+            "description": "第一次根据问题的思考过程的记录。",
+            "type": "string"
+        },
+        {
+            "name": "is_weather_api",
+            "description": "第一次思考作出是否需要天气API的判断，如果值是“是”，表示需要调用API后才能回复。",
+            "type": "string"
+        },
+        {
+            "name": "answer",
+            "description": "第一次思考给出的回复答案。",
+            "type": "string"
+        },
+        {
+            "name": "location",
+            "description": "调用天气API需要的位置参数，是英文城市名。",
+            "type": "string"
+        },
+        {
+            "name": "start",
+            "description": "起始时间，默认值是0，表示今天。-1表示昨天",
+            "type": "number",
+            "default":0
+        },
+        {
+            "name": "days",
+            "description": "需要获取天气的天数，默认值1只获取1天。",
+            "type": "number",
+            "default":3
+        }
+    ],
+    "outputs":[
+        {
+            "name": "answer",
+            "description": "提供出行计划的方案。",
+            "type": "string"
+        }
+    ],
+    "execution":{
+        "type": "select",
+        "cases": [{
+            "expression": "{is_weather_api} == '是'",
+            "condition":{
+                "operation": "equals",
+                "left": { "value_type": "variable", "value": "is_weather_api" },
+                "right": { "value_type": "constant", "value": "是" }
+                },
+            "description": "当LLM返回的is_weather_api值是“是”，决定调用天气api，执行获取相应天气后回复问题的流程",
+            "call": {
+                "class": "process",
+                "id": "process_planning0003",
+                "description": "调用天气api后提供回复",
+                "inputs":  [
+                    {
+                        "name": "question",
+                        "type": "string",
+                        "source": "question"
+                    },
+                    {
+                        "name": "city_name",
+                        "type": "string",
+                        "source": "city_name"
+                    },
+                    {
+                        "name": "thinking",
+                        "type": "string",
+                        "source": "thinking"
+                    },
+                    {
+                        "name": "location",
+                        "type": "string",
+                        "source": "location"
+                    },
+                    {
+                        "name": "start",
+                        "type": "number",
+                        "source": "start"
+                    },
+                    {
+                        "name": "days",
+                        "type": "number",
+                        "source": "days"
+                    }
+                ],
+                "outputs": [{
+                    "name": "answer",
+                    "type": "string",
+                    "target": "answer"
+                }]
+            }
+        }]
+    }
+}

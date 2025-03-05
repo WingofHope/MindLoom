@@ -1,0 +1,170 @@
+{
+    "id": "process_planning0001",
+    "name": "trip_schedule_main_process",
+    "description": "根据互联网接口查询到的天气情况，回答用户关于出行计划的问题的主流程。",
+    "inputs": [
+        {
+            "name": "question",
+            "description": "一个用户关于出行计划的问题。",
+            "type": "string"
+        }
+    ],
+    "outputs":[
+        {
+            "name": "answer",
+            "description": "提供出行计划的方案。",
+            "type": "string"
+        }
+    ],
+    "execution":{
+        "type": "sequence",
+        "steps": [
+            {
+                "order":1,
+                "description": "获取当前位置描述",
+                "call":{
+                    "class": "tool",
+                    "id": "local.local_address",
+                    "inputs": [],
+                    "outputs": [
+                        {
+                            "name": "local_address",
+                            "type": "string",
+                            "target": "GNSS_address"
+                        }
+                    ]
+                }
+            },
+            {
+                "order":2,
+                "description": "获取当前的时间信息",
+                "call":{
+                    "class": "tool",
+                    "id": "local.local_time",
+                    "inputs": [],
+                    "outputs": [
+                        {
+                            "name": "local_time_string",
+                            "type": "string",
+                            "target": "local_time_string"
+                        }
+                    ]
+                }
+            },
+            {
+                "order":3,
+                "description": "分析用户需求，判断是否属于出行计划的问题，设计计划推荐思路，给出天气查询方案。",
+                "call":{
+                    "class": "generator",
+                    "id": "generate_planning0001",
+                    "inputs": [
+                        {
+                            "name": "question",
+                            "type": "string",
+                            "source": "question"
+                        },
+                        {
+                            "name": "GNSS_address",
+                            "type": "string",
+                            "source": "GNSS_address"
+                        },
+                        {
+                            "name": "local_time_string",
+                            "type": "string",
+                            "source": "local_time_string"
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "name": "thinking",
+                            "type": "string",
+                            "target": "thinking"
+                        },
+                        {
+                            "name": "is_weather_api",
+                            "type": "string",
+                            "target": "is_weather_api"
+                        },
+                        {
+                            "name": "answer",
+                            "type": "string",
+                            "target": "answer"
+                        },
+                        {
+                            "name": "location",
+                            "type": "string",
+                            "target": "location"
+                        },
+                        {
+                            "name": "start",
+                            "type": "number",
+                            "target": "start"
+                        },
+                        {
+                            "name": "days",
+                            "type": "number",
+                            "target": "days"
+                        }
+                    ]
+                }
+            },
+            {
+                "order":4,
+                "description": "根据上一个步骤中是否需要调用天气来回答",
+                "call":{
+                    "class": "process",
+                    "id": "process_planning0002",
+                    "inputs": [
+                        {
+                            "name": "question",
+                            "type": "string",
+                            "source": "question"
+                        },
+                        {
+                            "name": "city_name",
+                            "type": "string",
+                            "source": "city_name"
+                        },
+                        {
+                            "name": "thinking",
+                            "type": "string",
+                            "source": "thinking"
+                        },
+                        {
+                            "name": "is_weather_api",
+                            "type": "string",
+                            "source": "is_weather_api"
+                        },
+                        {
+                            "name": "answer",
+                            "type": "string",
+                            "source": "answer"
+                        },
+                        {
+                            "name": "location",
+                            "type": "string",
+                            "source": "location"
+                        },
+                        {
+                            "name": "start",
+                            "type": "number",
+                            "source": "start"
+                        },
+                        {
+                            "name": "days",
+                            "type": "number",
+                            "source": "days"
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "name": "answer",
+                            "type": "string",
+                            "target": "answer"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
