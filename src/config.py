@@ -1,42 +1,32 @@
 # src/config.py
 
 import os
-import json
+import yaml
 
 # 获取当前项目根目录
 root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 # 配置文件路径
-config_path = os.path.join(root_path, 'config/config.json')
-default_config_path = os.path.join(root_path, 'config/default_config.json')
+config_path = os.path.join(root_path, 'config/config.yaml')
+default_config_path = os.path.join(root_path, 'config/default_config.yaml')
 
 class Config:
-    def __init__(self, config_path=config_path):
-        # 如果 config.json 不存在，则使用 default_config.json
+    def __init__(self):
+        # 如果 config.yaml 存在，则读取它，否则读取 default_config.yaml
         self.config_path = config_path if os.path.exists(config_path) else default_config_path
         self.config = self.load_config()
 
     def load_config(self):
+        """加载配置文件到内存"""
         try:
-            with open(self.config_path, 'r') as config_file:
-                config_data = json.load(config_file)
-
-                # 检查并加载 MongoDB 和 RabbitMQ 配置
-                if 'mongodb_config' not in config_data['prompts']:
-                    raise KeyError("'mongodb_config' 配置项在配置文件中缺失。")
-                
-                if 'rabbitmq' not in config_data['actions']:
-                    raise KeyError("'rabbitmq' 配置项在配置文件中缺失。")
-
-                return config_data
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"加载配置时出错: {e}")
-            return {}
-        except KeyError as ke:
-            print(f"配置文件中缺失必需的配置项: {ke}")
+            with open(self.config_path, 'r', encoding='utf-8') as config_file:
+                # 使用 yaml.safe_load 来加载 YAML 文件
+                return yaml.safe_load(config_file) or {}
+        except (FileNotFoundError, yaml.YAMLError) as e:
             return {}
 
     def get(self, key, default=None):
+        """获取配置项"""
         keys = key.split('.')
         value = self.config
         try:
@@ -47,6 +37,7 @@ class Config:
         return value
 
     def set(self, key, value):
+        """设置配置项，并保存到 config.yaml"""
         keys = key.split('.')
         d = self.config
         for k in keys[:-1]:
@@ -55,25 +46,13 @@ class Config:
         self.save_config()
 
     def save_config(self):
+        """保存配置到 config.yaml，丢弃注释"""
         try:
-            with open(self.config_path, 'w') as config_file:
-                json.dump(self.config, config_file, indent=4)
+            with open(config_path, 'w', encoding='utf-8') as config_file:
+                # 使用 yaml.dump 保存配置，丢弃注释
+                yaml.dump(self.config, config_file, allow_unicode=True, default_flow_style=False)
         except IOError as e:
-            print(f"保存配置文件时出错: {e}")
+            pass
 
 # 初始化配置
 config = Config()
-
-# LOG 配置
-LOG_PATH = config.get('log_config.path', 'log/')
-LOG_MODE = config.get('log_config.mode', 'debug')
-
-# 模板加载方法
-TEMPLATE_LOAD_METHOD = config.get('prompts.default_source', 'file')
-TEMPLATE_FILE_PATH = os.path.join(root_path, config.get('prompts.file_config.file_path', 'prompts'))
-
-# MongoDB 配置
-MONGO_CONFIG = config.get('prompts.mongodb_config')
-
-# RabbitMQ 配置
-RABBITMQ_CONFIG = config.get('actions.rabbitmq')

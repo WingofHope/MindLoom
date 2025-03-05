@@ -1,6 +1,5 @@
 # src/engine/executor/action/action.py
 
-from config import root_path
 from engine.executor.executor import Executor
 from services.rabbitmq.rabbitmq_producer import NoneBlockingMQClient, load_mq_config_parameters
 import threading

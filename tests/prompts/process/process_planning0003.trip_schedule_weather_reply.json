@@ -1,0 +1,118 @@
+{
+    "id": "process_planning0003",
+    "name": "trip_schedule_weather_reply",
+    "description": "调用天气action，获取天气数据后提供推荐方案。",
+    "inputs": [
+        {
+            "name": "question",
+            "description": "一个用户关于出行计划的问题。",
+            "type": "string"
+        },
+        {
+            "name": "city_name",
+            "description": "通过Tool获得的本地城市名。",
+            "type": "string"
+        },
+        {
+            "name": "thinking",
+            "description": "第一次根据问题的思考过程的记录。",
+            "type": "string"
+        },
+        {
+            "name": "location",
+            "description": "调用天气API需要的位置参数，是英文城市名。",
+            "type": "string"
+        },
+        {
+            "name": "start",
+            "description": "起始时间，默认值是0，表示今天。-1表示昨天1表示明天。",
+            "type": "number"
+        },
+        {
+            "name": "days",
+            "description": "需要获取天气的天数，默认值1表示只获取1天的数据。",
+            "type": "number"
+        }
+    ],
+    "outputs":[
+        {
+            "name": "answer",
+            "description": "根据天气情况提供出行计划的方案。",
+            "type": "string"
+        }
+    ],
+    "execution":{
+        "type": "sequence",
+        "steps": [
+            {
+                "order":1,
+                "description": "获取天气信息",
+                "call":{
+                    "class": "action",
+                    "id": "action_weather0001",
+                    "inputs": [
+                        {
+                            "name": "location",
+                            "type": "string",
+                            "source": "location"
+                        },
+                        {
+                            "name": "start",
+                            "type": "number",
+                            "source": "start"
+                        },
+                        {
+                            "name": "days",
+                            "type": "number",
+                            "source": "days"
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "name": "weather_result",
+                            "type": "string",
+                            "target": "weather_result"
+                        }
+                    ]
+                }
+            },
+            {
+                "order":2,
+                "description": "调用LLM，根据天气预报情况生成推荐计划。",
+                "call":{
+                    "class": "generator",
+                    "id": "generate_planning0002",
+                    "inputs": [
+                        {
+                            "name": "question",
+                            "type": "string",
+                            "source": "question"
+                        },
+                        {
+                            "name": "city_name",
+                            "type": "string",
+                            "source": "city_name"
+                        },
+                        {
+                            "name": "thinking",
+                            "type": "string",
+                            "source": "thinking"
+                        },
+                        {
+                            "name": "weather_result",
+                            "type": "string",
+                            "source": "weather_result"
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "name": "answer",
+                            "type": "string",
+                            "target": "answer"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

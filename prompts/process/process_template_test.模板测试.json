@@ -1,0 +1,67 @@
+{
+    "id": "process_template_test",
+    "name": "模板测试",
+    "description": "用于模板测试。",
+    "inputs": [
+        {
+            "name": "input",
+            "description": "输入测试。",
+            "type": "string"
+        }
+    ],
+    "outputs":[
+        {
+            "name": "output",
+            "description": "输出测试。",
+            "default": "输出",
+            "type": "string"
+        },
+        {
+            "name": "local_time",
+            "description": "输出本地时间。",
+            "type": "string"
+        }
+    ],
+    "execution":{
+        "type": "sequence",
+        "steps": [
+            {
+                "order":1,
+                "description": "获取当前位置描述",
+                "call":{
+                    "class": "tool",
+                    "id": "local.local_address",
+                    "inputs": [],
+                    "outputs": [
+                        {
+                            "name": "local_address",
+                            "type": "string",
+                            "target": "GNSS_address"
+                        }
+                    ]
+                }
+            },
+            {
+                "order":2,
+                "description": "获取当前的时间信息",
+                "call":{
+                    "class": "tool",
+                    "id": "local.local_time",
+                    "inputs": [
+                        {
+                            "name": "timezone",
+                            "type": "string",
+                            "value": "Asia/Shanghai"
+                        }],
+                    "outputs": [
+                        {
+                            "name": "local_time",
+                            "type": "string",
+                            "target": "local_time"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

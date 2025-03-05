@@ -3,8 +3,11 @@
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 import time
-from config import MONGO_CONFIG
+
+from config import config
 from services.logger.base_logger import BaseLogger
+
+MONGO_CONFIG = config.get("prompts.mongodb_config")
 
 class MongoDB:
     def __init__(self):

@@ -1,0 +1,43 @@
+{
+    "id": "task_template_test0001",
+    "name": "template_test",
+    "description": "这是一个测试模板",
+    "inputs": [
+        {
+            "name": "question",
+            "description": "测试问题。",
+            "type": "string"
+        }
+    ],
+    "outputs":[
+        {
+            "name": "mytime",
+            "description": "测试答案。",
+            "type": "string"
+        }
+    ],
+    "execution": {
+        "call":{
+            "id": "local.local_time",
+            "class":"tool",
+            "error_handling": {
+                "strategy": "skip",
+                "retry": {
+                    "enabled": false,
+                    "retry_count": 3,
+                    "interval": 0
+                }
+            },
+            "inputs": [{
+                "name": "timezone",
+                "type": "string",
+                "value": "Asia/Shanghai"
+            }],
+            "outputs":[{
+                    "name": "local_time",
+                    "type": "string",
+                    "target": "mytime"
+            }]
+        }
+    }
+}

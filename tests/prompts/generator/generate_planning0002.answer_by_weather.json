@@ -1,0 +1,73 @@
+{
+    "id": "generate_planning0002",
+    "name":"answer_by_weather",
+    "description": "",
+    "inputs": [
+        {
+            "name": "question",
+            "description": "用户原始关于出行计划的问题。",
+            "type": "string"
+        },
+        {
+            "name": "thinking",
+            "description": "第一次根据问题的思考过程的记录。",
+            "type": "string"
+        },
+        {
+            "name": "weather_result",
+            "description": "调用知心天气API获得的天气预报信息的json结论。",
+            "type": "string"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "answer",
+            "description": "根据天气思思考回答用户的话术。",
+            "type": "string"
+        }
+    ],
+    "template": {
+        "llm": {
+            "mode": "chat",
+            "url": "http://localhost:400000000000/p/q"
+        },
+        "parse":{
+            "mode": "static",
+            "placeholder_format": "{{variable_name}}"
+        },
+        "post_body": {
+            "model": "gpt-4o-mini",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "【标题】《天气出行助手》\n【任务】根据用户输入的问题，结合地点、时间、天气数据三个信息，提供合适活动行程规划。\n【输入格式】xml格式<question>代表用户输入，<thinking>代表上一次LLM在获得天气信息前的思考过程，<weather_json>代表知心天气API返回的天气数据json。\n【输出格式】xml格式<answer>代表输出给到用户的话术。\n【分析步骤】上一次LLM在获得天气信息前的思考<thinking>标签输出思考过程，结论是需要调用知心天气API，当前知心天气API已经给出json。结合以上信息回复用户的原始问题到<answer>标签中，需要提供行程规划，并用俏皮的语气生成话术。"
+                },
+                {
+                    "role": "user",
+                    "content": "<input><question>我在北京出差，会待一周，每天晚上6点下班，希望下班去逛后海，有啥推荐吗?哪天去合适？</question>\n<thinking>用户在北京出差，期望下班后去逛后海，因此这是一个活动出行类的问题。根据用户提供的时间（每天下班时间是18:00），需要为其推荐合适的活动行程规划。后海是适合晚上游玩的地方，可以考虑天气因素来判断最合适的出行时间。所以我需要查看接下来几天的天气情况，看哪天适合去。</thinking>\n<weather_json>{\"results\":[{\"location\":{\"id\":\"WX4FBXXFKE4F\",\"name\":\"北京\",\"country\":\"CN\",\"path\":\"北京,北京,中国\",\"timezone\":\"Asia/Shanghai\",\"timezone_offset\":\"+08:00\"},\"daily\":[{\"date\":\"2024-12-03\",\"text_day\":\"晴\",\"code_day\":\"0\",\"text_night\":\"多云\",\"code_night\":\"4\",\"high\":\"9\",\"low\":\"-3\",\"rainfall\":\"0.00\",\"precip\":\"0.00\",\"wind_direction\":\"西南\",\"wind_direction_degree\":\"225\",\"wind_speed\":\"8.4\",\"wind_scale\":\"2\",\"humidity\":\"47\"},{\"date\":\"2024-12-04\",\"text_day\":\"多云\",\"code_day\":\"4\",\"text_night\":\"晴\",\"code_night\":\"1\",\"high\":\"8\",\"low\":\"-2\",\"rainfall\":\"0.00\",\"precip\":\"0.00\",\"wind_direction\":\"西南\",\"wind_direction_degree\":\"225\",\"wind_speed\":\"8.4\",\"wind_scale\":\"2\",\"humidity\":\"43\"},{\"date\":\"2024-12-05\",\"text_day\":\"晴\",\"code_day\":\"0\",\"text_night\":\"多云\",\"code_night\":\"4\",\"high\":\"9\",\"low\":\"-1\",\"rainfall\":\"0.00\",\"precip\":\"0.00\",\"wind_direction\":\"西北\",\"wind_direction_degree\":\"315\",\"wind_speed\":\"3.0\",\"wind_scale\":\"1\",\"humidity\":\"59\"}],\"last_update\":\"2024-12-03T08:00:00+08:00\"}]}</weather_json></inpuut>"
+                },
+                {
+                    "role": "assistant",
+                    "content":"<output><answer>嘿，出差之余还想着后海浪一圈，懂享受！看天气，后天晴朗又不冷，最适合！下班后直接奔后海，7点到，先沿湖溜达拍夜景，再找家湖边小酒吧，热饮配夜风，倍儿惬意！带条围巾，别玩太晚，工作浪两不误！</answer></output>"
+                },
+                {
+                    "role": "user",
+                    "content": "<input><question>{{question}}</question>\n<thinking>{{thinking}}</thinking>\n<weather_json>{{weather_result}}</weather_json></inpuut>"
+                }
+            ]
+        },
+        "assert": {
+            "finish_reason" : "stop",
+            "choices_length": 1
+        },
+        "extract": {
+            "mode": "xml", 
+            "rules": [
+                {
+                    "variable": "answer",
+                    "path": "//answer/text()"
+                }
+            ]
+        }
+    }
+}

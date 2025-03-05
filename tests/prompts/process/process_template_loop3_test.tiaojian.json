@@ -1,0 +1,56 @@
+{
+    "id": "process_template_loop3_test",
+    "name": "模板测试",
+    "description": "用于模板测试循环流程条件。",
+    "inputs": [
+        {
+            "name": "input",
+            "description": "输入测试。",
+            "type": "string"
+        },
+        {
+            "name": "count",
+            "description": "计数器",
+            "type": "number"
+        }
+    ],
+    "outputs":[
+        {
+            "name": "output",
+            "description": "输出测试。",
+            "type": "string"
+        }
+    ],
+    "execution":{
+        "type": "loop",
+        "loop_type": "condition",
+        "max_loop_num": 4,
+        "condition": {
+            "type": "and",
+            "conditions": [
+                {
+                    "operation": "equals",
+                    "left": { "value_type": "variable", "value": "input" },
+                    "right": { "value_type": "constant", "value": "地点" }
+                },
+                {
+                    "operation": "lessThan",
+                    "left": { "value_type": "variable", "value": "count" },
+                    "right": { "value_type": "constant", "value": 2 }
+                }
+            ]
+        },
+        "call": {
+            "class": "tool",
+            "id": "local.local_address",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "local_address",
+                    "type": "string",
+                    "target": "output"
+                }
+            ]
+        }
+    }
+}

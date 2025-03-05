@@ -5,14 +5,7 @@ import json
 from datetime import datetime
 
 # 从配置文件获取提示模板读入的方式
-# from config import LOG_METHOD
-# if LOG_METHOD == 'mongodb':
-#     from services.mongodb import logs_collection # client = MongoClient() 的对象
-# elif LOG_METHOD == 'file':
-#     from config import LOG_FILE_PATH # log的主路径，如“log/run_records”
-
-LOG_METHOD = 'file'
-LOG_FILE_PATH = 'log/run_records/'
+from config import config
 
 class RuntimeLog:
     def __init__(self, template_id, class_name, run_id, task_id=None, parent_run_id=None, inputs=None, attributes=None):
@@ -50,9 +43,10 @@ class RuntimeLog:
 
     def update_log(self):
         """更新日志，支持MongoDB和文件系统的更新"""
-        if LOG_METHOD == 'mongodb':
+        log_mode = config.get("runtime_log.log_mode","localfile")
+        if log_mode == 'mongodb':
             self.save_to_mongodb()
-        elif LOG_METHOD == 'file':
+        elif log_mode == 'localfile':
             self.save_to_file()
 
     def save_to_mongodb(self):
@@ -61,9 +55,13 @@ class RuntimeLog:
 
     def save_to_file(self):
         """将初始日志记录保存到文件系统"""
+        # 将task_id作为文件夹名字，如果task_id不存在，使用#做文件夹名字
         task_id = self.log.get('task_id', '#')
         dir_path = task_id if task_id is not None else '#'
-        log_dir = os.path.join(LOG_FILE_PATH, dir_path)
+        # 从配置文件获取运行时日志的文件保存位置
+        file_path = config.get("runtime_log.file_config.file_path","log/runtime_log")
+        log_dir = os.path.join(file_path, dir_path)
+        # 如果文件夹不存在则创建
         os.makedirs(log_dir, exist_ok=True)
         log_path = os.path.join(log_dir, f"{self.log['run_id']}.log")
 

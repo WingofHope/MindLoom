@@ -1,0 +1,42 @@
+{
+    "id": "process_template_loop_test",
+    "name": "模板测试",
+    "description": "用于模板测试循环流程。",
+    "inputs": [
+        {
+            "name": "input",
+            "description": "输入测试。",
+            "type": "string"
+        },
+        {
+            "name": "count",
+            "description": "计数器",
+            "type": "number"
+        }
+    ],
+    "outputs":[
+        {
+            "name": "output",
+            "description": "输出测试。",
+            "type": "string"
+        }
+    ],
+    "execution":{
+        "type": "loop",
+        "loop_type": "count",
+        "count": { "value_type": "constant", "value": 2 },
+        "max_loop_num": 3,
+        "call": {
+            "class": "tool",
+            "id": "local.local_address",
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "local_address",
+                    "type": "string",
+                    "target": "output"
+                }
+            ]
+        }
+    }
+}

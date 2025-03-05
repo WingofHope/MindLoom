@@ -1,0 +1,37 @@
+{
+    "id": "task_planning0001",
+    "name": "trip_schedule_by_weather",
+    "description": "根据互联网接口查询到的天气情况，回答用户关于出行计划的问题。",
+    "inputs": [
+        {
+            "name": "question",
+            "description": "一个用户关于出行计划的问题。",
+            "type": "string"
+        }
+    ],
+    "outputs":[
+        {
+            "name": "answer",
+            "description": "提供出行计划的方案。",
+            "type": "string"
+        }
+    ],
+    "execution": {
+        "call":{
+            "id": "process_planning0001",
+            "class":"process",
+            "inputs": [
+                {
+                    "name": "question",
+                    "type": "string",
+                    "source": "question"
+                }
+            ],
+            "outputs":[{
+                    "name": "answer",
+                    "type": "string",
+                    "target": "answer"
+            }]
+        }
+    }
+}
