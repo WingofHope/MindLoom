@@ -46,6 +46,24 @@ runtime_log:
     auth_source: ""  # MongoDB 认证源，默认为空
     connection_string: "mongodb://localhost:27017/runtime_log"  # 连接字符串
 
+generator:
+  # 配置LLM生成相关参数
+  llm-provider:
+    openai:  # OpenAI配置
+      base_url: "https://api.openai.com/"
+      api_key: "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"  # 替换为你的OpenAI API密钥
+
+    baidu_wenxin_yiyan:  # 百度文心一言配置
+      base_url: "https://aip.baidubce.com/rpc/2.0/unit/bot"  # API基础URL，实际可能需要根据官方文档调整
+      api_key: "your_baidu_api_key"  # 百度API密钥
+      secret_key: "your_baidu_secret_key"  # 百度Secret Key（某些API可能需要）
+      bot_id: "your_bot_id"  # 百度机器人ID
+   
+    aliyun_tongyi_qianwen:  # 阿里云通义千问配置
+      base_url: "https://your-aliyun-endpoint.com/"  # 阿里云提供的实际API端点
+      access_key_id: "your_aliyun_access_key_id"  # 阿里云Access Key ID
+      access_key_secret: "your_aliyun_access_key_secret"  # 阿里云Access Key Secret
+
 actions:
   # 配置操作调用方式
   action_mode: "rabbitmq"  # 操作调用方式。当前支持：localfile, REST_API, rabbitmq
@@ -88,3 +106,22 @@ performance:
     loop:
       max_loop_num: 100  # 最大循环次数
       max_executor_timeout: 60  # 最大执行超时秒数
+
+encryption:
+  # 配置文件中字段加密配置
+  fields:
+    # 需要加密的字段
+    - "actions.REST_API_config.headers.Authorization"
+    - "actions.rabbitmq.password"
+    - "generator.llm-provider.aliyun_tongyi_qianwen.access_key_secret"
+    - "generator.llm-provider.baidu_wenxin_yiyan.api_key"
+    - "generator.llm-provider.baidu_wenxin_yiyan.secret_key"
+    - "generator.llm-provider.openai.api_key"
+    - "prompts.mongodb_config.password"
+    - "runtime_log.mongodb_config.password"
+
+  patterns:
+    # 需要加密的
+    - "password"    # 所有以最终字段名是password的字段
+    - "*key"        # 所有最终字段名以key结尾的字段
+    - "*secret"     # 所有最终字段名以secret结尾的字段
