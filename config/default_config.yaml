@@ -7,6 +7,7 @@
 
 log_config:
   # 日志输出的相关配置
+  mode: "develop" # 可选值 "develop"表示开发环境会使用print,"product"表示生产环境不会使用print
   level: "debug"  # 可选值: "debug", "info", "warn", "error"
   path: "log/"   # 日志文件存储的路径
 
@@ -109,6 +110,8 @@ performance:
 
 encryption:
   # 配置文件中字段加密配置
+  encryption_enabled: false # 是否启用配置文件字段加密机制
+  
   fields:
     # 需要加密的字段
     - "actions.REST_API_config.headers.Authorization"
