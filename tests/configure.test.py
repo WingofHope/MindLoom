@@ -17,5 +17,4 @@ MONGO_CONFIG = config.get('prompts.mongodb_config')
 # RabbitMQ 配置
 RABBITMQ_CONFIG = config.get('actions.rabbitmq')
 
-print(LOG_PATH)
 config.save_config()
