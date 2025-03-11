@@ -18,21 +18,25 @@ class Config:
         self.config_path = config_path if os.path.exists(config_path) else default_config_path
         self.config = self.load_config()
 
-        # 检查加密配置，如果启用了加密，则要求存在 CONFIG_PASSWORD 环境变量，并解密敏感字段
+        # 处理当配置文件启用了字段加密功能，需要先解密
         encryption_conf = self.config.get("encryption", {})
         if encryption_conf.get("encryption_enabled", False):
             password = os.environ.get("CONFIG_PASSWORD")
             if not password:
-                raise ValueError("配置文件加密已启用，但环境变量 CONFIG_PASSWORD 未设置。")
-            self._decrypt_config_fields(password)
+                print("配置文件解密错误: 未设置环境变量 CONFIG_PASSWORD，无法解密配置文件。")
+            else:
+                self._decrypt_config_fields(password)
 
     def load_config(self):
         """加载配置文件到内存"""
         try:
             with open(self.config_path, 'r', encoding='utf-8') as config_file:
-                # 使用 yaml.safe_load 来加载 YAML 文件
                 return yaml.safe_load(config_file) or {}
-        except (FileNotFoundError, yaml.YAMLError):
+        except FileNotFoundError:
+            print(f"配置文件读取错误: 配置文件 {self.config_path} 未找到。")
+            return {}
+        except yaml.YAMLError as e:
+            print(f"配置文件读取错误: 解析 YAML 文件失败: {e}")
             return {}
 
     def get(self, key, default=None):
@@ -64,21 +68,22 @@ class Config:
         if encryption_conf.get("encryption_enabled", False):
             password = os.environ.get("CONFIG_PASSWORD")
             if not password:
-                raise ValueError("配置文件加密已启用，但环境变量 CONFIG_PASSWORD 未设置。")
+                print("配置文件存储错误: 配置文件加密已启用，但环境变量 CONFIG_PASSWORD 未设置。")
+                return
             # 深拷贝，避免修改内存中解密后的明文配置
             config_to_save = copy.deepcopy(self.config)
             self._encrypt_config_fields(config_to_save, password)
             try:
                 with open(config_path, 'w', encoding='utf-8') as config_file:
                     yaml.dump(config_to_save, config_file, allow_unicode=True, default_flow_style=False)
-            except IOError:
-                pass
+            except IOError as e:
+                print(f"配置文件存储错误: 保存配置文件失败: {e}")
         else:
             try:
                 with open(config_path, 'w', encoding='utf-8') as config_file:
                     yaml.dump(self.config, config_file, allow_unicode=True, default_flow_style=False)
             except IOError:
-                pass
+                print(f"配置文件存储错误: 保存配置文件失败: {e}")
 
     def _collect_sensitive_keys(self, data: dict, encryption_conf: dict) -> set:
         """
@@ -96,7 +101,7 @@ class Config:
                 if isinstance(value, str):
                     sensitive_keys.add(full_key)
             except Exception:
-                pass
+                print(f"配置文件字段错误:  加密字段 {full_key} 失败: {e}")
 
         # 递归遍历 data，根据 patterns 匹配敏感字段，跳过 encryption 部分
         def collect(d, base_path):
@@ -133,8 +138,8 @@ class Config:
                 if isinstance(value, str):
                     decrypted_value = decrypt(password, value)
                     self._set_nested_value(self.config, keys, decrypted_value)
-            except Exception:
-                pass
+            except Exception as e:
+                print("配置文件解密错误: 解密字段 {full_key} 失败: {e}")
 
     def _encrypt_config_fields(self, config_data: dict, password: str):
         """
@@ -151,8 +156,8 @@ class Config:
                 if isinstance(value, str):
                     encrypted_value = encrypt(password, value)
                     self._set_nested_value(config_data, keys, encrypted_value)
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"配置文件加密错误: 加密字段 {full_key} 失败: {e}")
 
     @staticmethod
     def _get_nested_value(d: dict, keys: list):
