@@ -1,6 +1,7 @@
 # src/config.py
 
 import os
+import sys
 import yaml
 import copy
 from secret import encrypt, decrypt  # 使用已有的加解密函数
@@ -21,11 +22,18 @@ class Config:
         # 处理当配置文件启用了字段加密功能，需要先解密
         encryption_conf = self.config.get("encryption", {})
         if encryption_conf.get("encryption_enabled", False):
+            strict_mode = encryption_conf.get("strict_mode", True)
             password = os.environ.get("CONFIG_PASSWORD")
+
             if not password:
                 print("配置文件解密错误: 未设置环境变量 CONFIG_PASSWORD，无法解密配置文件。")
-            else:
-                self._decrypt_config_fields(password)
+                if strict_mode:
+                    sys.exit(1)  # 强制终止程序
+            
+            if not self._decrypt_config_fields(password):
+                print("配置文件解密错误: 提供的密码错误，无法解密配置文件。")
+                if strict_mode:
+                    sys.exit(1)  # 强制终止程序
 
     def load_config(self):
         """加载配置文件到内存"""
@@ -38,6 +46,13 @@ class Config:
         except yaml.YAMLError as e:
             print(f"配置文件读取错误: 解析 YAML 文件失败: {e}")
             return {}
+
+    def delete_default_config(self):
+        if os.path.exists(default_config_path):  # 先检查文件是否存在
+            os.remove(default_config_path)
+            print(f"{default_config_path} 已删除")
+        else:
+            print(f"{default_config_path} 不存在")
 
     def get(self, key, default=None):
         """获取配置项"""
@@ -57,7 +72,6 @@ class Config:
         for k in keys[:-1]:
             d = d.setdefault(k, {})
         d[keys[-1]] = value
-        self.save_config()
 
     def save_config(self):
         """
@@ -78,12 +92,15 @@ class Config:
                     yaml.dump(config_to_save, config_file, allow_unicode=True, default_flow_style=False)
             except IOError as e:
                 print(f"配置文件存储错误: 保存配置文件失败: {e}")
+                return False
         else:
             try:
                 with open(config_path, 'w', encoding='utf-8') as config_file:
                     yaml.dump(self.config, config_file, allow_unicode=True, default_flow_style=False)
             except IOError:
                 print(f"配置文件存储错误: 保存配置文件失败: {e}")
+                return False
+        return True
 
     def _collect_sensitive_keys(self, data: dict, encryption_conf: dict) -> set:
         """
@@ -123,13 +140,17 @@ class Config:
         collect(data, [])
         return sensitive_keys
 
-    def _decrypt_config_fields(self, password: str):
+    def _decrypt_config_fields(self, password: str) -> bool:
         """
         对 self.config 中的敏感字段进行解密，
         根据 encryption.fields 和 encryption.patterns 中定义的规则进行匹配
+        返回是否所有字段都解密成功
         """
         encryption_conf = self.config.get("encryption", {})
         sensitive_keys = self._collect_sensitive_keys(self.config, encryption_conf)
+
+        # 默认所有字段都解密成功
+        is_decrypted_successfully = True
 
         for full_key in sensitive_keys:
             keys = full_key.split('.')
@@ -139,15 +160,22 @@ class Config:
                     decrypted_value = decrypt(password, value)
                     self._set_nested_value(self.config, keys, decrypted_value)
             except Exception as e:
-                print("配置文件解密错误: 解密字段 {full_key} 失败: {e}")
+                is_decrypted_successfully = False
+                print(f"配置文件解密错误: 解密字段 {full_key} 失败: {e}")
 
-    def _encrypt_config_fields(self, config_data: dict, password: str):
+        return is_decrypted_successfully
+
+    def _encrypt_config_fields(self, config_data: dict, password: str)  -> bool:
         """
         对 config_data 中的敏感字段进行加密，
         根据 encryption.fields 和 encryption.patterns 中定义的规则进行匹配
+        返回是否所有字段都加密成功
         """
         encryption_conf = config_data.get("encryption", {})
         sensitive_keys = self._collect_sensitive_keys(config_data, encryption_conf)
+
+        # 默认所有字段都加密成功
+        is_encrypted_successfully = True
 
         for full_key in sensitive_keys:
             keys = full_key.split('.')
@@ -157,7 +185,10 @@ class Config:
                     encrypted_value = encrypt(password, value)
                     self._set_nested_value(config_data, keys, encrypted_value)
             except Exception as e:
+                is_encrypted_successfully = False
                 print(f"配置文件加密错误: 加密字段 {full_key} 失败: {e}")
+
+        return is_encrypted_successfully
 
     @staticmethod
     def _get_nested_value(d: dict, keys: list):

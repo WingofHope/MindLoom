@@ -111,6 +111,7 @@ performance:
 encryption:
   # 配置文件中字段加密配置
   encryption_enabled: false # 是否启用配置文件字段加密机制
+  strict_mode: true         # 是否强制校验解密（解密失败时终止程序）
   
   fields:
     # 需要加密的字段
