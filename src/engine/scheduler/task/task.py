@@ -5,8 +5,8 @@ from engine.scheduler.scheduler import Scheduler
 from engine.scheduler.process.process import Process
 
 class Task(Scheduler):
-    def __init__(self, template_id, secret=None, task_id=None, parent_run_id=None):
-        super().__init__(template_id, secret, task_id, parent_run_id)
+    def __init__(self, template_id, task_id=None, parent_run_id=None):
+        super().__init__(template_id, task_id, parent_run_id)
         # 添加Process类到类映射中（这个代码有点别扭，没有更好的办法就这样弄了，待改进）
         self.EXECUTION_CLASS_MAPPING['process'] = Process
 

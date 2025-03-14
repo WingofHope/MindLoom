@@ -34,9 +34,8 @@ class Base:
     runtime_log = None
 
     # 构造函数加载模板和校验模板
-    def __init__(self, template_id, secret=None, task_id=None, parent_run_id=None):
+    def __init__(self, template_id, task_id=None, parent_run_id=None):
         self.template_id = template_id
-        self.secret = secret
         self.task_id = task_id
         self.parent_run_id = parent_run_id
 
@@ -52,7 +51,7 @@ class Base:
 ############## 执行相关逻辑 ##############
 
     # 运行的主体方法
-    def run(self, inputs, run_id=None, secret=None):
+    def run(self, inputs, run_id=None):
         # 设置运行时id
         if run_id:
             self.run_id = run_id
