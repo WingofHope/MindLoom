@@ -41,19 +41,19 @@ python main.py run -c task -id <task_id> -i '<JSON 输入>' [-p <密码>]
 
 **示例**：
 ```bash
-python main.py run -c task -id task_template_test0001 -i '{"question": "我想去天安门后天，什么时间合适？"}'
+python main.py run -c task -id task_template -i '{"question": "我想去天安门后天，什么时间合适？"}'
 ```
 
 #### CLI 命令列表
 
 | 命令 | 说明 |
 |------|------|
-| `run -id <task_id> -i <inputs>` | 运行指定任务 ID 的任务 |
-| `validate-template -f <file_path>` | 验证 JSON 模板文件 |
-| `list-tools` | 列出可用工具 |
-| `export-metadata` | 导出工具元数据 |
-| `secure-config --encrypt` | 加密 config.yaml 配置文件 |
-| `secure-config --decrypt` | 解密配置文件（需要密码） |
+| `run -c <class_name> -id <task_id> -i <inputs> [-p <密码>]` | 运行指定 ID 的任务 |
+| `get-template -c <class_name> -id <task_id> [-p <密码>]` | 获取指定 ID 的模板 |
+| `validate-template -c <class_name> -t <template_json> [-p <密码>]` | 验证 JSON 模板 |
+| `get-tools` | 列出可用工具 |
+| `get-tools-template` | 导出可用工具的 JSON 模板|
+| `secure-config [-s] [-p <密码>]` | 加密关键字段并保存 config.yaml 配置文件 |
 
 ### 2. Python API 使用
 
@@ -67,7 +67,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../s
 
 from engine.scheduler.task.task import Task
 
-t_id = 'task_template_test0001'
+t_id = 'task_template'
 inputs = { 'question': '我想去天安门后天，什么时间合适？' }
 
 try:
@@ -123,7 +123,7 @@ Mindloom 记录两类日志：
 - 任务可能调用 `action`，支持三种方式：
   1. **REST API**
   2. **本地文件**
-  3. **RabbitMQ**（可选）
+  3. **RabbitMQ**
 
 ## API 兼容性
 
