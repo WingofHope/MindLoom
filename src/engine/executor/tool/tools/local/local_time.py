@@ -1,7 +1,8 @@
 # src/engine/executor/tool/tools/local/local_time.py
 
+
 from datetime import datetime
-import pytz
+from engine.executor.tool.tool_base import toolbase
 
 class LocalTime:
     @staticmethod
@@ -20,10 +21,13 @@ class LocalTime:
 
     @staticmethod
     def run(inputs):
+        #toolbase.import_or_install('pytz')
+        #toolbase.import_or_install('pytz', caller_locals=locals())
+        pytz = toolbase.import_or_install('pytz')
         timezone = inputs.get("timezone", "UTC")
         try:
             tz = pytz.timezone(timezone)
             now = datetime.now(tz)
             return {"local_time": now.strftime("%Y-%m-%d %H:%M:%S %A %Z")}
         except Exception as e:
-            raise RuntimeError(f"Invalid timezone: {timezone}. Error: {e}")
+            raise ValueError(f"Invalid timezone: {timezone}. Error: {e}")

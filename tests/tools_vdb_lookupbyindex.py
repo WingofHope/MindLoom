@@ -11,11 +11,13 @@ from engine.executor.tool.tool_manager import tool_manager as tm
 
 class TestTask(unittest.TestCase):
 
-    def test_run_case2(self):
-        tool_id = 'local.local_time'
+    def test_run_case(self):
+        tool_id = 'vectordb.lookup_by_index'
         secret = None
-        inputs = {'timezone':'Asia/Shanghai'}
-        #inputs = {'addend':1,'augend':2}
+        inputs = {
+            'table_name': 'test_table',
+            'index': 1
+        }
         try:
             tool_instance = Tool(tool_id, secret)
             result = tool_instance.run(inputs)

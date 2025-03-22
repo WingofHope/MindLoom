@@ -1,0 +1,18 @@
+{
+  "next_index": 2,
+  "records": [
+    {
+      "index": 1,
+      "vector": [
+        0.1,
+        0.2,
+        0.4
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    }
+  ]
+}

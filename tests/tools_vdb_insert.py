@@ -11,11 +11,15 @@ from engine.executor.tool.tool_manager import tool_manager as tm
 
 class TestTask(unittest.TestCase):
 
-    def test_run_case2(self):
-        tool_id = 'local.local_time'
+    def test_run_case(self):
+        tool_id = 'vectordb.insert'
         secret = None
-        inputs = {'timezone':'Asia/Shanghai'}
-        #inputs = {'addend':1,'augend':2}
+        inputs = {
+            'table_name': 'test_table',
+            'vector': [0.1, 0.2, 0.4],
+            'raw_string': '测试文本',
+            'metadata': {'source': 'test', 'id': 123}
+        }
         try:
             tool_instance = Tool(tool_id, secret)
             result = tool_instance.run(inputs)
