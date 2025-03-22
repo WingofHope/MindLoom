@@ -144,6 +144,8 @@ class Generator(Executor):
         return text
 
     def _load_secret(self):
+        from config import config
+        return config.get("generator.llm-provider.openai.api_key")
         """从配置文件加载密钥"""
         try:
             # 获取项目根目录下的配置文件路径
