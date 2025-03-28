@@ -67,7 +67,7 @@ generator:
 
 actions:
   # 配置操作调用方式
-  action_mode: "rabbitmq"  # 操作调用方式。当前支持：localfile, REST_API, rabbitmq
+  action_mode: "rabbitmq"  # 操作调用方式。当前支持：localfile, REST_API, rabbitmq, mcp
   type:
     - "synchronous"  # 同步
     - "asynchronous"  # 异步
@@ -81,6 +81,8 @@ actions:
     password: "guest"  # RabbitMQ 密码
     host: "localhost"  # RabbitMQ 主机
     port: 5672  # RabbitMQ 端口
+  localfile:
+    rootdir:"shared_mem" # default data/shared_mem
 
 tools:
   # 配置工具的定义

@@ -145,28 +145,6 @@ class Generator(Executor):
     def _load_secret(self):
         from config import config
         return config.get("generator.llm-provider.openai.api_key")
-        """从配置文件加载密钥"""
-        try:
-            # 获取项目根目录下的配置文件路径
-            config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))),
-                                     "config", 
-                                     "secret.yaml")
-            print("config_path:", config_path)
-            with open(config_path, 'r', encoding='utf-8') as f:
-                config = yaml.safe_load(f)
-                
-            # 获取 API 密钥
-            if 'openai' not in config or 'api_key' not in config['openai']:
-                raise ValueError("配置文件中缺少 openai.api_key")
-                
-            return config['openai']['api_key']
-            
-        except FileNotFoundError:
-            raise RuntimeError("找不到配置文件 config/secret.yaml")
-        except yaml.YAMLError as e:
-            raise RuntimeError(f"解析配置文件失败: {str(e)}")
-        except Exception as e:
-            raise RuntimeError(f"读取密钥配置失败: {str(e)}")
 
 ############## 提示模板相关逻辑 ##############
 
