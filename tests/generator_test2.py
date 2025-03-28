@@ -10,7 +10,7 @@ from engine.executor.generator.generator import Generator
 
 class TestTask(unittest.TestCase):
     def test_run_case2(self):
-        gen_id = 'generate_planning0001'
+        gen_id = 'generate_planning0002'
         secret = None
         inputs = {
             'question':'我想去桂林',
@@ -20,7 +20,7 @@ class TestTask(unittest.TestCase):
         # gen_instance = Generator(gen_id, secret)
         try:
             gen_instance = Generator(gen_id, secret)
-            # print(gen_instance.get_template())
+            print(gen_instance.get_template())
             result = gen_instance.run(inputs)
             print(result)
         except Generator.TemplateError as e:

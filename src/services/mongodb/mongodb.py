@@ -3,8 +3,11 @@
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 import time
-from config import MONGO_CONFIG
-from services.logger.base_logger import BaseLogger
+
+from config import config
+from services.logger.create_logger import CreateLogger
+
+MONGO_CONFIG = config.get("prompts.mongodb_config")
 
 class MongoDB:
     def __init__(self):
@@ -85,6 +88,3 @@ class MongoDB:
         except Exception as e:
             self.logger.error(f"Failed to find document: {e}")
             return None
-
-# 实例化 MongoDB 对象
-mongo_db = MongoDB()

@@ -1,0 +1,34 @@
+{
+    "action_id": "wechat_check_login_status",
+    "name": "WeChat Check Login Status",
+    "description": "检查微信登录状态",
+    "inputs": [
+        {
+            "name": "request_id",
+            "type": "string",
+            "description": "唯一的请求ID"
+        },
+        {
+            "name": "action_name",
+            "type": "string",
+            "description": "执行的动作名称"
+        },
+        {
+            "name": "overtime",
+            "type": "string",  
+            "description": "操作超时时间（毫秒）"
+        },
+        {
+            "name": "inputs",
+            "type": "string",
+            "description": "动作输入内容"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output",
+            "type": "string",
+            "description": "操作的输出结果，包含JSON字符串"
+        }
+    ]
+}

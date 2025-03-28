@@ -8,6 +8,6 @@ venv/
 .idea/
 **/.code-workspace
 log/
-config/config.json
+config/config.yaml
 config/secret.yaml
 

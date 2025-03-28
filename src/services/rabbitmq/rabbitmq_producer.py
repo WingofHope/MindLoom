@@ -6,10 +6,12 @@ import time
 import pika
 import json
 import threading
-from services.logger.base_logger import BaseLogger
-from config import RABBITMQ_CONFIG
+from services.logger.create_logger import CreateLogger
+from config import config
 
-logger = BaseLogger("rabbitmq")
+RABBITMQ_CONFIG = config.get("actions.rabbitmq")
+
+logger = CreateLogger("rabbitmq")
 
 def load_mq_config_parameters():
     rabbitmq_config = RABBITMQ_CONFIG

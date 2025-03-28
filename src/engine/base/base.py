@@ -10,12 +10,12 @@ class Base:
     # 定义模版校验错误的类
     class TemplateError(Exception):
         def __init__(self, errors):
-            super().__init__("Template 格式校验失败：")
+            super().__init__("Template 格式校验失败")
             self.errors = errors
     # 定义值校验错误类
     class ParameterError(Exception):
         def __init__(self, errors):
-            super().__init__("参数格式校验失败：")
+            super().__init__("参数格式校验失败")
             self.errors = errors
 
     # 定义参数类型种类
@@ -34,9 +34,8 @@ class Base:
     runtime_log = None
 
     # 构造函数加载模板和校验模板
-    def __init__(self, template_id, secret=None, task_id=None, parent_run_id=None):
+    def __init__(self, template_id, task_id=None, parent_run_id=None):
         self.template_id = template_id
-        self.secret = secret
         self.task_id = task_id
         self.parent_run_id = parent_run_id
 
@@ -52,7 +51,7 @@ class Base:
 ############## 执行相关逻辑 ##############
 
     # 运行的主体方法
-    def run(self, inputs, run_id=None, secret=None):
+    def run(self, inputs, run_id=None):
         # 设置运行时id
         if run_id:
             self.run_id = run_id
@@ -77,6 +76,16 @@ class Base:
             self.runtime_log.add_record(f"当前任务 {self.run_id} 执行完毕，运行获得的返回参数：{outputs}")
             # 根据返回的outputs判断是否有没生成的，再填充默认值，并校验是否合法，不合法报错，合法则返回。
             validated_outputs = self._validate_param(self.template["outputs"], outputs, "输出")
+        except self.TemplateError as te:
+            errors_list = [f"{error}" for error in te.errors]
+            errors_output = "模板验证失败，错误信息如下：\n" + "\n".join(errors_list)
+            self.runtime_log.mark_as_failed(errors_output)
+            raise te
+        except self.ParameterError as pe:
+            errors_list = [f"{error}" for error in pe.errors]
+            errors_output = "参数校验失败，错误信息如下：\n" + "\n".join(errors_list)
+            self.runtime_log.mark_as_failed(errors_output)
+            raise pe
         except Exception as exc:
             self.runtime_log.mark_as_failed(exc)
             # 继续向上抛出异常错误

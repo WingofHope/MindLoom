@@ -1,6 +1,5 @@
 # src/engine/executor/action/action.py
 
-from config import root_path
 from engine.executor.executor import Executor
 from services.rabbitmq.rabbitmq_producer import NoneBlockingMQClient, load_mq_config_parameters
 import threading
@@ -11,6 +10,8 @@ import time
 class Action(Executor):
     def __init__(self, template_id, secret=None, task_id=None, parent_run_id=None):
         super().__init__(template_id, secret, task_id, parent_run_id)
+        parameters = load_mq_config_parameters()
+        self.mq_client = NoneBlockingMQClient(parameters)
         self.lock = threading.Lock()  # 使用线程锁来确保线程安全
 
         self.commu_mode = "localfile"
