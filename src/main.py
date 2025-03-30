@@ -74,7 +74,8 @@ def validate_template(class_name, template):
         print("无效的模板 JSON 格式。")
 
     except Exception as e:
-        if isinstance(e, (Task.TemplateError, Process.TemplateError, Action.TemplateError, Generator.TemplateError, Tool.TemplateError)):
+        from engine.base.base import Base
+        if isinstance(e, (Base.TemplateError)):
             print("模板验证失败，错误信息如下：")
             for error in e.errors:
                 print(f"- {error}")
