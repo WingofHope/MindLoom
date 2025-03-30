@@ -49,7 +49,7 @@ class Generator(Executor):
             placeholder_format = parse_config["placeholder_format"]
             post_body = self._replace_variables(post_body, inputs, placeholder_format)
 
-        print("post_body: ", post_body)
+        # print("post_body: ", post_body)
         self.runtime_log.add_record(f"发送给 llm 的 post_body 是 {post_body} 。")
         
         # 发送请求到OpenAI API
@@ -67,7 +67,7 @@ class Generator(Executor):
             )
             response.raise_for_status()
             llm_response = response.json()
-            print("llm_response:", llm_response)
+            # print("llm_response:", llm_response)
             self.runtime_log.add_record(f"llm 的输出是 {llm_response} 。")
             
             # 使用extract规则从响应中提取所需信息
@@ -458,7 +458,7 @@ class Generator(Executor):
             if not content:
                 raise ValueError("LLM响应中没有找到有效内容")
 
-            print("content:", content)
+            # print("content:", content)
             # 解析XML内容
             # 将内容包装在根元素中，以处理可能的多个顶级元素
             xml_content = f"<root>{content}</root>"
