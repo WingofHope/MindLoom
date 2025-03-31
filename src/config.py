@@ -1,22 +1,29 @@
 # src/config.py
 
-import os
 import sys
+import os
 import yaml
 import copy
-from secret import encrypt, decrypt  # 使用已有的加解密函数
+from pathlib import Path
+from typing import Any, Dict, Optional, Set, List
+from secret import encrypt, decrypt  # 依赖外部加解密函数
+
+from services.logger.create_logger import base_log
 
 # 获取当前项目根目录
-root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+ROOT_PATH: Path = Path(__file__).resolve().parent.parent
 
 # 配置文件路径
-config_path = os.path.join(root_path, 'config/config.yaml')
-default_config_path = os.path.join(root_path, 'config/default_config.yaml')
+CONFIG_PATH: Path = ROOT_PATH / "config" / "config.yaml"
+DEFAULT_CONFIG_PATH: Path = ROOT_PATH / "config" / "default_config.yaml"
 
 class Config:
     def __init__(self):
+        global base_log
+        from services.logger.create_logger import base_log  # 这延迟导入日志打印模块base_log
+
         # 如果 config.yaml 存在，则读取它，否则读取 default_config.yaml
-        self.config_path = config_path if os.path.exists(config_path) else default_config_path
+        self.config_path = config_path if config_path.exists() else default_config_path
         self.config = self.load_config()
 
         # 处理当配置文件启用了字段加密功能，需要先解密
@@ -28,7 +35,7 @@ class Config:
             if not password:
                 print("配置文件解密错误: 未设置环境变量 CONFIG_PASSWORD，无法解密配置文件。")
                 if strict_mode:
-                    sys.exit(1)  # 强制终止程序
+                    sys.exit(sys.exit(os.EX_CONFIG))  # 强制终止程序
             
             if not self._decrypt_config_fields(password):
                 print("配置文件解密错误: 提供的密码错误，无法解密配置文件。")
