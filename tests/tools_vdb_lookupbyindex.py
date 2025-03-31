@@ -12,7 +12,7 @@ from engine.executor.tool.tool_manager import tool_manager as tm
 class TestTask(unittest.TestCase):
 
     def test_run_case(self):
-        tool_id = 'vectordb.lookup_by_index'
+        tool_id = 'local_vectordb.lookup_by_index'
         secret = None
         inputs = {
             'table_name': 'test_table',

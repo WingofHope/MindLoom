@@ -1,9 +1,13 @@
 # src/engine/executor/tool/tools/local/local_address.py
 
 
-from engine.executor.tool.tool_base import toolbase
+from engine.executor.tool.tool_base import ToolBase
 
-class LocalAddress:
+class LocalAddress(ToolBase):
+    
+    def __init__(self):
+        super().__init__()
+        self.import_or_install('pytz')
     
     @staticmethod
     def metadata():
@@ -17,7 +21,5 @@ class LocalAddress:
             ]
         }
 
-    @staticmethod
-    def run(inputs):
-        toolbase.import_or_install('pytz')
+    def run(self, inputs):
         return {"local_address": "北京市昌平区回龙观龙跃苑二区"}

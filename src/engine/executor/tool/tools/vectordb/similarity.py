@@ -3,49 +3,17 @@ from pathlib import Path
 from typing import Dict, List, Any
 import numpy as np
 
+from engine.executor.tool.tool_base import ToolBase
+from services.local_vectordb.local_vectordb_base import VectorDBHandler
 
-class VectorDBHandler:
-	_memory_cache: Dict[str, Dict] = {}  # 内存缓存 {table_name: data}
-	
-	@classmethod
-	def _get_storage_dir(cls) -> Path:
-		"""计算存储目录路径"""
-		current_file = Path(__file__).resolve()  # 当前脚本的绝对路径
-		# 从当前脚本路径回溯到项目根目录（MindLoom-develop）
-		project_root = current_file.parent.parent.parent.parent.parent.parent
-		# 目标路径：项目根目录/database/vector database
-		return project_root / "database" / "vector database"
-	
-	@classmethod
-	def _load_or_create_table(cls, table_name: str) -> Dict:
-		"""核心内存访问函数"""
-		if table_name in cls._memory_cache:
-			return cls._memory_cache[table_name]
+class RangeQuery(ToolBase):
+	def __init__(self):
+		super().__init__()
 		
-		storage_dir = cls._get_storage_dir()
-		storage_dir.mkdir(parents=True, exist_ok=True)  # 确保目录存在
-		file_path = storage_dir / f"{table_name}.json"
-		
-		try:
-			if file_path.exists():
-				with open(file_path, "r", encoding="utf-8") as f:
-					data = json.load(f)
-			else:
-				data = {"next_index": 1, "records": []}
-			
-			cls._memory_cache[table_name] = data
-			return data
-		except Exception as e:
-			raise RuntimeError(f"Failed to load/create table: {str(e)}")
-	
-
-
-
-class RangeQuery:
 	@staticmethod
 	def metadata():
 		return {
-			"id": "vectordb.range_query",
+			"id": "local_vectordb.range_query",
 			"name": "range_query",
 			"description": "根据相似度阈值查找所有相似度大于给定值的向量记录。",
 			"inputs": [
@@ -68,8 +36,7 @@ class RangeQuery:
 		norm_vec2 = np.linalg.norm(vec2)
 		return dot_product / (norm_vec1 * norm_vec2)
 	
-	@staticmethod
-	def range_query_run(inputs: Dict) -> Dict[str, List]:
+	def range_query_run(self, inputs: Dict) -> Dict[str, List]:
 		try:
 			# 输入参数校验
 			required_fields = ["table_name", "query_vector", "similarity_threshold"]
@@ -136,10 +103,9 @@ class RangeQuery:
 				"matching_similarities": []
 			}
 	
-	@staticmethod
-	def run(inputs):
+	def run(self, inputs):
 		# 执行查询操作
-		result = RangeQuery.range_query_run(inputs)
+		result = self.range_query_run(inputs)
 		return result
 
 
@@ -151,5 +117,5 @@ if __name__ == "__main__":
 		"similarity_threshold": 0.8
 	}
 
-	result = RangeQuery.run(test_input)
+	result = RangeQuery().run(test_input)
 	print(f"查询结果: {result}")

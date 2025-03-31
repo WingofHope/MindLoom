@@ -1,8 +1,12 @@
-from engine.executor.tool.tool_base import toolbase
+from engine.executor.tool.tool_base import ToolBase
 import random
 
 
-class RandomNumberGenerator:
+class RandomNumberGenerator(ToolBase):
+	def __init__(self):
+		super().__init__()
+		globals()['random'] = self.import_or_install('random')
+	
 	@staticmethod
 	def metadata():
 		return {
@@ -18,24 +22,22 @@ class RandomNumberGenerator:
 			]
 		}
 	
-	@staticmethod
-	def run(inputs):
+	def run(self, inputs):
 		min_val = inputs.get("min")
 		max_val = inputs.get("max")
 
-		#if min_val is None or max_val is None:
-			#raise ValueError("请提供随机数范围的最小和最大值")
+		if min_val is None or max_val is None:
+			raise ValueError("请提供随机数范围的最小和最大值")
 		
-		#if not isinstance(min_val, int) or not isinstance(max_val, int):
-			#raise ValueError("参数必须是整数类型")
+		if not isinstance(min_val, (int, float)) or not isinstance(max_val, (int, float)):
+			raise ValueError("参数必须是数字类型")
 		
-		#if min_val > max_val:
-			#raise ValueError(f"无效的范围：{min_val} 不能大于 {max_val}")
+		if min_val > max_val:
+			raise ValueError(f"无效的范围：{min_val} 不能大于 {max_val}")
 		
-		# 生成随机数
 		try:
 			return {
-				"random_number": random.randint(min_val, max_val)
+				"random_number": random.randint(int(min_val), int(max_val))
 			}
 		except Exception as e:
-			raise RuntimeError(f"生成随机数失败: {str(e)}")
+			raise ValueError(f"生成随机数失败: {str(e)}")

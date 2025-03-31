@@ -1,46 +1,25 @@
 from pathlib import Path
 from typing import Dict, Any
 import json
+# import sys
+# from pathlib import Path
+#
+# project_root = Path(__file__).resolve().parents[4]
+# sys.path.append(str(project_root))
 
-#未对超出index的数据做出处理，默认返回值类型出错
-class VectorDBHandler:
-	_memory_cache: Dict[str, Dict] = {}  # 内存缓存 {table_name: data}
-	
-	@classmethod
-	def _get_storage_dir(cls) -> Path:
-		"""计算存储目录路径"""
-		current_file = Path(__file__).resolve()  # 当前脚本的绝对路径
-		# 从当前脚本路径回溯到项目根目录（假设项目根目录为 MindLoom-develop）
-		project_root = current_file.parent.parent.parent.parent.parent.parent
-		# 目标路径：项目根目录/database/vector database
-		return project_root / "database" / "vector database"
-	
-	@classmethod
-	def _load_table(cls, table_name: str) -> Dict:
-		"""加载表数据（仅读取，不写入）"""
-		if table_name in cls._memory_cache:
-			return cls._memory_cache[table_name]
-		
-		storage_dir = cls._get_storage_dir()
-		file_path = storage_dir / f"{table_name}.json"
-		
-		try:
-			if file_path.exists():
-				with open(file_path, "r", encoding="utf-8") as f:
-					data = json.load(f)
-				cls._memory_cache[table_name] = data
-				return data
-			else:
-				raise FileNotFoundError(f"Table {table_name} does not exist")
-		except Exception as e:
-			raise RuntimeError(f"Failed to load table: {str(e)}")
+from engine.executor.tool.tool_base import ToolBase
+from services.local_vectordb.local_vectordb_base import VectorDBHandler
 
 
-class LookupByIndex:
+
+class LookupByIndex(ToolBase):
+	def __init__(self):
+		super().__init__()
+
 	@staticmethod
 	def metadata():
 		return {
-			"id": "vectordb.lookup_by_index",
+			"id": "local_vectordb.lookup_by_index",
 			"name": "lookup_by_index",
 			"description": "根据索引号查找向量的原始字符串和附加的结构体数据。",
 			"inputs": [
@@ -53,8 +32,7 @@ class LookupByIndex:
 			]
 		}
 	
-	@staticmethod
-	def lookup_by_index_run(inputs: Dict) -> Dict[str, Any]:
+	def lookup_by_index_run(self, inputs: Dict) -> Dict[str, Any]:
 		try:
 			# 输入参数校验
 			required_fields = ["table_name", "index"]
@@ -70,7 +48,7 @@ class LookupByIndex:
 				raise TypeError("Index must be a non-negative integer")
 			
 			# 加载数据表
-			data = VectorDBHandler._load_table(table_name)
+			data = VectorDBHandler._load_or_create_table(table_name)
 			
 			# 查找记录
 			for record in data["records"]:
@@ -87,10 +65,9 @@ class LookupByIndex:
 			print(f"查找操作异常: {str(e)}")
 			return {"raw_string": None, "metadata": None}
 	
-	@staticmethod
-	def run(inputs):
+	def run(self, inputs):
 		# 执行查找操作
-		result = LookupByIndex.lookup_by_index_run(inputs)
+		result = self.lookup_by_index_run(inputs)
 		return result
 
 

@@ -2,67 +2,20 @@ import json
 from pathlib import Path
 from typing import Dict, List, Any
 
+# import sys
+# from pathlib import Path
+# sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent.parent))  # 添加到MindLoom根目录
+from engine.executor.tool.tool_base import ToolBase
+from services.local_vectordb.local_vectordb_base import VectorDBHandler
 
-class VectorDBHandler:
-	_memory_cache: Dict[str, Dict] = {}  # 内存缓存 {table_name: data}
+class Insert(ToolBase):
+	def __init__(self):
+		super().__init__()
 	
-	@classmethod
-	def _get_storage_dir(cls) -> Path:
-		"""计算存储目录路径"""
-		current_file = Path(__file__).resolve()  # 当前脚本的绝对路径
-		# 从当前脚本路径回溯到项目根目录（MindLoom-develop）
-		project_root = current_file.parent.parent.parent.parent.parent.parent
-		# 目标路径：项目根目录/database/vector database
-		return project_root / "database" / "vector database"
-	
-	@classmethod
-	def _load_or_create_table(cls, table_name: str) -> Dict:
-		"""核心内存访问函数"""
-		if table_name in cls._memory_cache:
-			return cls._memory_cache[table_name]
-		
-		storage_dir = cls._get_storage_dir()
-		storage_dir.mkdir(parents=True, exist_ok=True)  # 确保目录存在
-		file_path = storage_dir / f"{table_name}.json"
-		
-		try:
-			if file_path.exists():
-				with open(file_path, "r", encoding="utf-8") as f:
-					data = json.load(f)
-			else:
-				data = {"next_index": 1, "records": []}
-			
-			cls._memory_cache[table_name] = data
-			return data
-		except Exception as e:
-			raise RuntimeError(f"Failed to load/create table: {str(e)}")
-	
-	@classmethod
-	def _save_table(cls, table_name: str) -> bool:
-		"""持久化存储到文件"""
-		if table_name not in cls._memory_cache:
-			return False
-		
-		try:
-			storage_dir = cls._get_storage_dir()
-			file_path = storage_dir / f"{table_name}.json"
-			with open(file_path, "w", encoding="utf-8") as f:
-				json.dump(
-					cls._memory_cache[table_name],
-					f,
-					indent=2,
-					ensure_ascii=False
-				)
-			return True
-		except Exception as e:
-			raise RuntimeError(f"Failed to save table: {str(e)}")
-
-
-class Insert:
 	@staticmethod
 	def metadata():
 		return {
-			"id": "vectordb.insert",
+			"id": "local_vectordb.insert",
 			"name": "vectordb_insert",
 			"description": "将向量、原始字符串和结构体数据插入指定的库表",
 			"inputs": [
@@ -77,7 +30,7 @@ class Insert:
 		}
 	
 	
-	def insert_run(inputs: Dict) -> Dict[str, bool]:
+	def insert_run(self, inputs: Dict) -> Dict[str, bool]:
 		try:
 			# 输入参数校验
 			required_fields = ["table_name", "vector", "raw_string", "metadata"]
@@ -120,10 +73,9 @@ class Insert:
 			print(f"插入操作异常: {str(e)}")
 			return {"success": False}
 	
-	@staticmethod
-	def run(inputs):
+	def run(self, inputs):
 		# 测试插入操作
-		result = Insert.insert_run(inputs)
+		result = self.insert_run(inputs)
 		print(f"插入结果: {result}")
 		print(f"文件存储在: {VectorDBHandler._get_storage_dir()}")
 		return result

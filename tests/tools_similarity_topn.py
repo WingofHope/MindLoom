@@ -12,11 +12,11 @@ from engine.executor.tool.tool_manager import tool_manager as tm
 class TestTask(unittest.TestCase):
 
     def test_run_case(self):
-        tool_id = 'vectordb.similar_topn'
+        tool_id = 'local_vectordb.similar_topn'
         secret = None
         inputs = {
             "table_name": "test_table",
-            "query_vector": [0.1, 0.2, 0.3],
+            "query_vector": [0.1, 0.2, 0.3,0.7],
             "top_n": 2
         }
         try:

@@ -1,10 +1,19 @@
 # src/engine/executor/tool/tools/local/fetch_website_text.py
+from engine.executor.tool.tool_base import ToolBase
 
-from engine.executor.tool.tool_base import toolbase
-
-
-
-class FetchWebsiteText:
+class FetchWebsiteText(ToolBase):
+    def __init__(self):
+        super().__init__()
+        globals()['requests'] = self.import_or_install('requests')
+        globals()['BeautifulSoup'] = self.import_or_install('bs4').BeautifulSoup
+        # self.import_or_install('requests')
+        # import requests
+        # self.requests = requests
+        # globals()['requests'] = requests
+        # self.import_or_install('bs4')
+        # from bs4 import BeautifulSoup
+        # self.BeautifulSoup = BeautifulSoup
+        
     @staticmethod
     def metadata():
         return {
@@ -19,12 +28,7 @@ class FetchWebsiteText:
             ]
         }
 
-    @staticmethod
-    def run(inputs):
-        requests=toolbase.import_or_install('requests')
-        bs4=toolbase.import_or_install('bs4')
-        from bs4 import BeautifulSoup
-        
+    def run(self, inputs):
         url = inputs.get("url")
         if not url:
             raise ValueError("URL is required.")

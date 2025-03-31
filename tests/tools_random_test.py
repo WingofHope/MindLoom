@@ -24,7 +24,7 @@ class TestTask(unittest.TestCase):
     def test_run_case2(self):
         tool_id = 'random.number_generator'
         secret = None
-        inputs = {'min':1,'max':10}
+        inputs = {'min':1.6,'max':880.9}
         try:
             tool_instance = Tool(tool_id, secret)
             result = tool_instance.run(inputs)
