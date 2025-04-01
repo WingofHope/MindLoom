@@ -1,0 +1,173 @@
+{
+  "next_index": 13,
+  "records": [
+    {
+      "index": 1,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本1",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    },
+    {
+      "index": 2,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    },
+    {
+      "index": 3,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    },
+    {
+      "index": 4,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    },
+    {
+      "index": 5,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    },
+    {
+      "index": 6,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    },
+    {
+      "index": 7,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    },
+    {
+      "index": 8,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    },
+    {
+      "index": 9,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    },
+    {
+      "index": 10,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    },
+    {
+      "index": 11,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    },
+    {
+      "index": 12,
+      "vector": [
+        0.1,
+        0.2,
+        0.4,
+        1.0
+      ],
+      "raw_string": "测试文本",
+      "metadata": {
+        "source": "test",
+        "id": 123
+      }
+    }
+  ]
+}

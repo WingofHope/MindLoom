@@ -10,12 +10,21 @@ from engine.executor.tool.tool import Tool
 from engine.executor.tool.tool_manager import tool_manager as tm
 
 class TestTask(unittest.TestCase):
+    # def test_run_case1(self):
+        # print(tm.get_metadata('time.local_time'))
+
+        # tool_class = tm.load_tool('calculator.add')
+        # instant = tool_class()
+        # inputs = {'addend':1,'augend':2}
+        # print(instant.run(inputs))
+
+        # print(tm.list_tools())
+        # print(tm.export_metadata())
 
     def test_run_case2(self):
-        tool_id = 'local.local_time'
+        tool_id = 'random.number_generator'
         secret = None
-        inputs = {'timezone':'Asia/Shanghai'}
-        #inputs = {'addend':1,'augend':2}
+        inputs = {'min':1.6,'max':880.9}
         try:
             tool_instance = Tool(tool_id, secret)
             result = tool_instance.run(inputs)

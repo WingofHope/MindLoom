@@ -1,9 +1,14 @@
 # src/engine/executor/tool/tools/local/local_address.py
 
-from datetime import datetime
-import pytz
 
-class LocalTime:
+from engine.executor.tool.tool_base import ToolBase
+
+class LocalAddress(ToolBase):
+    
+    def __init__(self):
+        super().__init__()
+        self.import_or_install('pytz')
+    
     @staticmethod
     def metadata():
         return {
@@ -16,6 +21,5 @@ class LocalTime:
             ]
         }
 
-    @staticmethod
-    def run(inputs):
+    def run(self, inputs):
         return {"local_address": "北京市昌平区回龙观龙跃苑二区"}
