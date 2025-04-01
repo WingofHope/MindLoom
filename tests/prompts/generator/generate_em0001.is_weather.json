@@ -1,0 +1,49 @@
+{
+    "id": "generate_em0001",
+    "name": "is_weather",
+    "description": "用户问题的第一步思考，判断是否出行问题，根据用户的问题决定是否需要调用天气API。",
+    "inputs": [
+        {
+            "name": "question",
+            "type": "string",
+            "description": "使用天气行程助手的用户的问题。"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "answer",
+            "description": "向量",
+            "type": "vector"
+        }
+    ],
+    "template": {
+        "llm": {
+            "mode": "embedding",
+            "provider": "彩虹之眼",
+            "model": "text-embedding-3-small",
+            "version": "v1",
+            "url": "https://gitaigc.com/v1/embeddings"
+        },
+        "parse": {
+            "mode": "static",
+            "placeholder_format": "{{variable}}"
+        },
+        "post_body": {
+            "input": "宫保鸡丁是一道经典的川菜{{question}}，以嫩滑的鸡肉搭配香脆的花生，辅以干辣椒和花椒炒制而成，具有麻、辣、鲜、香、嫩、脆的独特风味。此菜源于清朝，因山东巡抚、四川总督丁宝桢喜爱并改良而得名，后流传全国乃至世界。制作时，鸡肉需先腌制，使其更加嫩滑，再与花生、干辣椒、葱姜蒜等炒香，最后勾芡收汁，使菜肴色泽红亮、咸鲜微甜，入口麻辣而不燥，口感丰富。其主要食材包括鸡胸肉、花生、干辣椒、花椒、葱姜蒜、酱油、醋、糖等，调味上注重酸甜平衡，以突出川菜特有的麻辣风味。由于其口感独特、营养丰富，深受国内外食客喜爱，尤其受到喜欢辣味及川菜风味的人群追捧。如今，宫保鸡丁已成为中餐馆的招牌菜之一，并衍生出牛肉、虾仁等多种版本，以适应不同饮食习惯和口味需求。",
+            "model": "text-embedding-3-small"
+        },
+        "assert": {
+            "finish_reason" : "stop",
+            "choices_length": 1
+        },
+        "extract": {
+            "mode": "xml",
+            "rules": [
+                {
+                    "variable": "answer",
+                    "path": "//answer/text()"
+                }
+            ]
+        }
+    }
+}

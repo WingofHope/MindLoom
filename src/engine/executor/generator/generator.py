@@ -28,10 +28,19 @@ class Generator(Executor):
         self.secret = self._load_secret()
         
         # print("inputs: ", inputs)
-        print("template: ", self.template)
+        self.runtime_log.add_record(f"template 是 {self.template} 。")
 
         # 获取模板配置
         llm_config = self.template["template"]["llm"]
+        
+        # 根据mode选择不同的处理逻辑
+        if llm_config["mode"] == "embedding":
+            return self._handle_embedding_mode(llm_config, inputs)
+        else:
+            return self._handle_normal_mode(llm_config, inputs)
+
+    def _handle_normal_mode(self, llm_config, inputs):
+        """处理非embedding模式的请求"""
         post_body = self.template["template"]["post_body"]
         parse_config = self.template["template"]["parse"]
 
@@ -41,6 +50,8 @@ class Generator(Executor):
             post_body = self._replace_variables(post_body, inputs, placeholder_format)
 
         # print("post_body: ", post_body)
+        self.runtime_log.add_record(f"发送给 llm 的 post_body 是 {post_body} 。")
+        
         # 发送请求到OpenAI API
         import requests
         try:
@@ -51,24 +62,58 @@ class Generator(Executor):
                     "Content-Type": "application/json"
                 },
                 json=post_body,
-                timeout=30,
+                timeout=50,
                 stream=False  # OpenAI API 支持流式响应，这里设置为 False
             )
             response.raise_for_status()
             llm_response = response.json()
             # print("llm_response:", llm_response)
+            self.runtime_log.add_record(f"llm 的输出是 {llm_response} 。")
             
             # 使用extract规则从响应中提取所需信息
             extract_config = self.template["template"]["extract"]
             outputs = self._extract_outputs(llm_response, extract_config)
 
-            print("outputs:", outputs)
+            self.runtime_log.add_record(f"根据extract规则从响应中提取的信息是 {outputs} 。")
             return outputs
             
         except requests.exceptions.RequestException as e:
             raise RuntimeError(f"调用LLM API失败: {str(e)}")
         except Exception as e:
             raise RuntimeError(f"处理LLM响应失败: {str(e)}")
+
+    def _handle_embedding_mode(self, llm_config, inputs):
+        """处理embedding模式的请求"""
+        # TODO: 实现embedding模式的处理逻辑
+        import requests
+        try:
+            # 构建embedding请求的post body
+            post_body = {
+                "input": inputs.get("text", ""),  # 假设输入中有一个text字段
+                "model": llm_config.get("model", "text-embedding-ada-002")  # 使用配置中的模型或默认值
+            }
+
+            response = requests.post(
+                llm_config["url"],
+                headers={
+                    "Authorization": f"Bearer {self.secret}",
+                    "Content-Type": "application/json"
+                },
+                json=post_body,
+                timeout=50
+            )
+            response.raise_for_status()
+            embedding_response = response.json()
+            
+            # 从响应中提取embedding向量
+            embedding_vector = embedding_response.get("data", [{}])[0].get("embedding", [])
+            
+            return {"embedding": embedding_vector}
+            
+        except requests.exceptions.RequestException as e:
+            raise RuntimeError(f"调用Embedding API失败: {str(e)}")
+        except Exception as e:
+            raise RuntimeError(f"处理Embedding响应失败: {str(e)}")
 
     def _replace_variables(self, post_body, inputs, placeholder_format):
         """替换post_body字典中的模板变量"""
@@ -98,28 +143,8 @@ class Generator(Executor):
         return text
 
     def _load_secret(self):
-        """从配置文件加载密钥"""
-        try:
-            # 获取项目根目录下的配置文件路径
-            config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))),
-                                     "config", 
-                                     "secret.yaml")
-            print("config_path:", config_path)
-            with open(config_path, 'r', encoding='utf-8') as f:
-                config = yaml.safe_load(f)
-                
-            # 获取 API 密钥
-            if 'openai' not in config or 'api_key' not in config['openai']:
-                raise ValueError("配置文件中缺少 openai.api_key")
-                
-            return config['openai']['api_key']
-            
-        except FileNotFoundError:
-            raise RuntimeError("找不到配置文件 config/secret.yaml")
-        except yaml.YAMLError as e:
-            raise RuntimeError(f"解析配置文件失败: {str(e)}")
-        except Exception as e:
-            raise RuntimeError(f"读取密钥配置失败: {str(e)}")
+        from config import config
+        return config.get("generator.llm-provider.openai.api_key")
 
 ############## 提示模板相关逻辑 ##############
 
@@ -433,7 +458,7 @@ class Generator(Executor):
             if not content:
                 raise ValueError("LLM响应中没有找到有效内容")
 
-            print("content:", content)
+            # print("content:", content)
             # 解析XML内容
             # 将内容包装在根元素中，以处理可能的多个顶级元素
             xml_content = f"<root>{content}</root>"
@@ -460,11 +485,27 @@ class Generator(Executor):
                     value = elements[0] if isinstance(elements[0], str) else elements[0].text
                     # 处理可能的空值
                     value = value.strip() if value else ""
+                    
+                    # 根据outputs定义的类型进行转换
+                    output_type = next((output["type"] for output in self.template["outputs"] if output["name"] == variable), None)
+                    if output_type:
+                        if output_type == "number":
+                            try:
+                                value = float(value) if '.' in value else int(value)
+                            except ValueError:
+                                # 如果转换失败，使用默认值
+                                default_value = next((output.get("default", 0) for output in self.template["outputs"] if output["name"] == variable), 0)
+                                value = default_value
+                        elif output_type == "string":
+                            value = str(value)
+                        # 可以根据需要添加其他类型的转换
+                    
                     outputs[variable] = value
                 else:
-                    # 如果没有找到匹配，设置为空字符串
-                    outputs[variable] = ""
-                
+                    # 如果没有找到匹配，使用默认值
+                    default_value = next((output.get("default", "") for output in self.template["outputs"] if output["name"] == variable), "")
+                    outputs[variable] = default_value
+            
             return outputs
             
         except etree.XMLSyntaxError as e:

@@ -29,7 +29,7 @@
     "template": {
         "llm": {
             "mode": "chat",
-            "url": "http://localhost:400000000000/p/q"
+            "url": "https://gitaigc.com/v1/chat/completions"
         },
         "parse":{
             "mode": "static",

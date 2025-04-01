@@ -59,14 +59,14 @@
             "provider": "彩虹之眼",
             "model": "gpt-4o",
             "version": "v1",
-            "url": "https://gitaigc.com/v1/chat/completions"
+            "url": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
         },
         "parse": {
             "mode": "static",
             "placeholder_format": "{{variable}}"
         },
         "post_body": {
-            "model": "gpt-4o-mini",
+            "model": "deepseek-v3",
             "messages": [
                 {
                     "role": "system",
