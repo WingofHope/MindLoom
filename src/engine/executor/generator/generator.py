@@ -421,8 +421,7 @@ class Generator(Executor):
                     if "path" not in rule:
                         errors.append(f"Genetor 模版中 'template' -> 'extract' 中 'mode' 为 '{mode}' 的规则必须包含 'path' 字段。")
                     else:
-                        pass
-                    validated_rule["path"] = rule["path"]
+                        validated_rule["path"] = rule["path"]
                 # 添加校验通过的rule字段
                 validated_extract["rules"].append(validated_rule)
             # 校验 outputs 中的每个 name 是否在 rules 中找到对应的 variable
