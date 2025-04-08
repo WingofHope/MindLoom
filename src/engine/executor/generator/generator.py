@@ -67,7 +67,7 @@ class Generator(Executor):
             )
             response.raise_for_status()
             llm_response = response.json()
-            # print("llm_response:", llm_response)
+            print("llm_response:", llm_response)
             self.runtime_log.add_record(f"llm 的输出是 {llm_response} 。")
             
             # 使用extract规则从响应中提取所需信息

@@ -79,7 +79,7 @@ class Insert(ToolBase):
 		print(f"插入结果: {result}")
 		print(f"文件存储在: {VectorDBHandler._get_storage_dir()}")
 		return result
-# 示例用法
+
 # if __name__ == "__main__":
 # 	# 测试插入操作
 # 	test_input = {

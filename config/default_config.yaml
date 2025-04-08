@@ -51,8 +51,8 @@ generator:
   # 配置LLM生成相关参数
   llm-provider:
     openai:  # OpenAI配置
-      base_url: "https://api.openai.com/"
-      api_key: "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"  # 替换为你的OpenAI API密钥
+      base_url: "https://gitaigc.com/v1"
+      api_key: ""  # 替换为你的OpenAI API密钥
 
     baidu_wenxin_yiyan:  # 百度文心一言配置
       base_url: "https://aip.baidubce.com/rpc/2.0/unit/bot"  # API基础URL，实际可能需要根据官方文档调整
@@ -64,6 +64,12 @@ generator:
       base_url: "https://your-aliyun-endpoint.com/"  # 阿里云提供的实际API端点
       access_key_id: "your_aliyun_access_key_id"  # 阿里云Access Key ID
       access_key_secret: "your_aliyun_access_key_secret"  # 阿里云Access Key Secret
+
+#    gitaigc: # 中间人配置
+#      base_url: "https://gitaigc.com/v1"  # 阿里云提供的实际API端点
+#      access_key_id: "your_agitaigc_access_key_id"  # 阿里云Access Key ID
+#      access_key_secret: ""  # 阿里云Access Key Secret
+
 
 actions:
   # 配置操作调用方式

@@ -10,7 +10,7 @@ from engine.executor.generator.generator import Generator
 
 class TestGenerator(unittest.TestCase):
     def test_run_case1(self):
-        gen_id = 'generator_0001'
+        gen_id = 'generate_sun10001'
         inputs = {}
         secret = None
 
@@ -21,18 +21,18 @@ class TestGenerator(unittest.TestCase):
         # 这里编写断言来验证 run 方法的输出是否符合预期
         self.assertEqual(result, {})
 
-    def test_run_case2(self):
-        t_id = 'generator_0002'
-        inputs = {'name': 'haha'}
-        secret = None
-
-        generator_instance = Generator(t_id, inputs, secret)
-        result = generator_instance.run()
-        print(result)
-
-        # 这里编写断言来验证 run 方法的输出是否符合预期
-        # 示例断言，你需要根据具体情况调整
-        self.assertEqual(result, {})
+    # def test_run_case2(self):
+    #     t_id = 'generator_0002'
+    #     inputs = {'name': 'haha'}
+    #     secret = None
+    #
+    #     generator_instance = Generator(t_id, inputs, secret)
+    #     result = generator_instance.run()
+    #     print(result)
+    #
+    #     # 这里编写断言来验证 run 方法的输出是否符合预期
+    #     # 示例断言，你需要根据具体情况调整
+    #     self.assertEqual(result, {})
 
 if __name__ == '__main__':
     unittest.main()

@@ -8,7 +8,7 @@ class LocalTime(ToolBase):
     
     def __init__(self):
         super().__init__()
-        self.import_or_install('pytz')
+        globals()['pytz'] = self.imported_modules.get('pytz')
         
     @staticmethod
     def metadata():

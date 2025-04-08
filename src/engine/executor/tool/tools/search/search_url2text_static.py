@@ -6,13 +6,6 @@ class FetchWebsiteText(ToolBase):
         super().__init__()
         globals()['requests'] = self.import_or_install('requests')
         globals()['BeautifulSoup'] = self.import_or_install('bs4').BeautifulSoup
-        # self.import_or_install('requests')
-        # import requests
-        # self.requests = requests
-        # globals()['requests'] = requests
-        # self.import_or_install('bs4')
-        # from bs4 import BeautifulSoup
-        # self.BeautifulSoup = BeautifulSoup
         
     @staticmethod
     def metadata():

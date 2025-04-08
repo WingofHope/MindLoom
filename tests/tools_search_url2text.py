@@ -14,7 +14,7 @@ class TestFetchWebsiteText(unittest.TestCase):
         tool_id = 'search.search_url2text_static'
         secret = None
         inputs = {
-            'url': 'https://search.bilibili.com/'
+            'url': 'https://www.baidu.com/'
         }
         try:
             tool_instance = Tool(tool_id, secret)
