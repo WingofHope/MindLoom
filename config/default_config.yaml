@@ -17,7 +17,7 @@ prompts:
   
   # 本地文件读取相关配置
   file_config:
-    file_path: "prompts/"  # 提示模板本地存放路径
+    file_path: "../prompts/"  # 提示模板本地存放路径
   
   # MongoDB 默认配置
   mongodb_config:
@@ -52,7 +52,7 @@ generator:
   llm-provider:
     openai:  # OpenAI配置
       base_url: "https://gitaigc.com/v1"
-      api_key: ""  # 替换为你的OpenAI API密钥
+      api_key: "sk-BQuATLYPp7sWm1Y88328633b43974c05Ae2eFc41C624EbE2"  # 替换为你的OpenAI API密钥
 
     baidu_wenxin_yiyan:  # 百度文心一言配置
       base_url: "https://aip.baidubce.com/rpc/2.0/unit/bot"  # API基础URL，实际可能需要根据官方文档调整

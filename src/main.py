@@ -50,6 +50,7 @@ def run(class_name, id, inputs):
 
     result = instance.run(inputs_dict, run_id)
     print(result)
+    
 
 def get_template(class_name, id):
     instance = create_instance(class_name, id)

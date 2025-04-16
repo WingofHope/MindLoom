@@ -1,0 +1,43 @@
+{
+    "id": "task_shuiwu_test0001",
+    "name": "税务测试模板",
+    "description": "这是一个税务测试模板",
+    "inputs": [
+        {
+            "name": "question",
+            "description": "测试问题。",
+            "type": "string"
+        }
+    ],
+    "outputs":[
+        {
+            "name": "Reply",
+            "description": "测试答案。",
+            "type": "string"
+        }
+    ],
+    "execution": {
+        "call":{
+            "id": "generate_test0001",
+            "class":"generator",
+            "error_handling": {
+                "strategy": "skip",
+                "retry": {
+                    "enabled": false,
+                    "retry_count": 3,
+                    "interval": 0
+                }
+            },
+            "inputs": [{
+                "name": "question",
+                "type": "string",
+                "source": "question"
+            }],
+            "outputs":[{
+                    "name": "Reply",
+                    "type": "string",
+                    "target": "Reply"
+            }]
+        }
+    }
+}
