@@ -1,0 +1,115 @@
+2025-04-18 16:36:21,787 - __main__ - INFO - Æô¶¯FlaskÓ¦ÓÃ...
+2025-04-18 16:36:21,798 - werkzeug - WARNING -  * Debugger is active!
+2025-04-18 16:36:21,802 - werkzeug - INFO -  * Debugger PIN: 141-277-860
+2025-04-18 16:36:44,076 - __main__ - INFO - Æô¶¯FlaskÓ¦ÓÃ...
+2025-04-18 16:36:44,104 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:17943
+ * Running on http://192.168.0.104:17943
+2025-04-18 16:36:44,105 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-18 16:36:44,106 - werkzeug - INFO -  * Restarting with stat
+2025-04-18 16:36:44,369 - __main__ - INFO - Æô¶¯FlaskÓ¦ÓÃ...
+2025-04-18 16:36:44,380 - werkzeug - WARNING -  * Debugger is active!
+2025-04-18 16:36:44,384 - werkzeug - INFO -  * Debugger PIN: 141-277-860
+2025-04-18 16:36:54,694 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 16:36:54] "OPTIONS /api/chat HTTP/1.1" 200 -
+2025-04-18 16:36:54,947 - __main__ - DEBUG - === ÊÕµ½ĞÂÇëÇó ===
+2025-04-18 16:36:54,949 - __main__ - DEBUG - Ô­Ê¼ÇëÇóÊı¾İ: {"message": "Ãñ·¨µäµÚ21ÌõÊÇÊ²Ã´"}
+2025-04-18 16:36:54,949 - __main__ - DEBUG - ÓÃ»§ÏûÏ¢: Ãñ·¨µäµÚ21ÌõÊÇÊ²Ã´
+2025-04-18 16:36:54,949 - __main__ - DEBUG - ¹¹ÔìµÄÊäÈëJSON: {"question": "Ãñ·¨µäµÚ21ÌõÊÇÊ²Ã´"}
+2025-04-18 16:36:54,949 - __main__ - DEBUG - main.pyÂ·¾¶: G:\mindloom_git\MindLoom\src\main.py
+2025-04-18 16:36:54,949 - __main__ - DEBUG - Ö´ĞĞÃüÁî: G:\mindloom\shuiwu\venv\Scripts\python.exe G:\mindloom_git\MindLoom\src\main.py run -c task -id task_shuiwu_test0001 -i {"question": "Ãñ·¨µäµÚ21ÌõÊÇÊ²Ã´"}
+2025-04-18 16:36:54,949 - __main__ - DEBUG - ¿ªÊ¼Ö´ĞĞ×Ó½ø³Ì...
+2025-04-18 16:36:58,734 - __main__ - DEBUG - ×Ó½ø³ÌÖ´ĞĞÍê³É
+2025-04-18 16:36:58,734 - __main__ - DEBUG - ×Ó½ø³Ì·µ»ØÂë: 0
+2025-04-18 16:36:58,734 - __main__ - DEBUG - ×Ó½ø³Ì±ê×¼Êä³ö: ÈÎÎñÕıÔÚÔËĞĞ£¬run_id: 0bb2bc2e-28ad-4088-9562-8e6be3380782
+llm_response: {'id': 'chatcmpl-BNbVP1DUR43KC1LEOFGh3ninYs3yP', 'object': 'chat.completion', 'created': 1744965415, 'model': 'gpt-4o-2024-08-06', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '<output><Type>¾ÓÃñ¸öÈË</Type><KeyWord>Ãñ·¨µäµÚ21Ìõ</KeyWord><ToDo>½âÊÍÃñ·¨µäµÚ21ÌõµÄÄÚÈİ</ToDo><Thinking>ÓÃ»§Ñ¯ÎÊµÄÊÇ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21ÌõµÄ¾ßÌåÄÚÈİ¡£¸ù¾İ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·Ïà¹Ø·¨ÂÉÌõ¿î½øĞĞ²éÕÒºÍ½âÊÍ¡£<TaxType>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</TaxType></Thinking><Reply>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</Reply></output>', 'refusal': None, 'annotations': []}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 422, 'completion_tokens': 195, 'total_tokens': 617, 'prompt_tokens_details': {'cached_tokens': 0, 'audio_tokens': 0}, 'completion_tokens_details': {'reasoning_tokens': 0, 'audio_tokens': 0, 'accepted_prediction_tokens': 0, 'rejected_prediction_tokens': 0}}, 'service_tier': 'default', 'system_fingerprint': 'fp_90122d973c'}
+{'Reply': '¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£'}
+
+2025-04-18 16:36:58,734 - __main__ - DEBUG - ×Ó½ø³Ì´íÎóÊä³ö: 
+2025-04-18 16:36:58,734 - __main__ - DEBUG - Ô­Ê¼Êä³öÄÚÈİ: ÈÎÎñÕıÔÚÔËĞĞ£¬run_id: 0bb2bc2e-28ad-4088-9562-8e6be3380782
+llm_response: {'id': 'chatcmpl-BNbVP1DUR43KC1LEOFGh3ninYs3yP', 'object': 'chat.completion', 'created': 1744965415, 'model': 'gpt-4o-2024-08-06', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '<output><Type>¾ÓÃñ¸öÈË</Type><KeyWord>Ãñ·¨µäµÚ21Ìõ</KeyWord><ToDo>½âÊÍÃñ·¨µäµÚ21ÌõµÄÄÚÈİ</ToDo><Thinking>ÓÃ»§Ñ¯ÎÊµÄÊÇ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21ÌõµÄ¾ßÌåÄÚÈİ¡£¸ù¾İ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·Ïà¹Ø·¨ÂÉÌõ¿î½øĞĞ²éÕÒºÍ½âÊÍ¡£<TaxType>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</TaxType></Thinking><Reply>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</Reply></output>', 'refusal': None, 'annotations': []}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 422, 'completion_tokens': 195, 'total_tokens': 617, 'prompt_tokens_details': {'cached_tokens': 0, 'audio_tokens': 0}, 'completion_tokens_details': {'reasoning_tokens': 0, 'audio_tokens': 0, 'accepted_prediction_tokens': 0, 'rejected_prediction_tokens': 0}}, 'service_tier': 'default', 'system_fingerprint': 'fp_90122d973c'}
+{'Reply': '¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£'}
+2025-04-18 16:36:58,734 - __main__ - DEBUG - ³¢ÊÔ½âÎöÊä³öÎªJSON...
+2025-04-18 16:36:58,735 - __main__ - DEBUG - Êä³ö²»ÊÇJSON¸ñÊ½: Expecting value: line 1 column 1 (char 0)
+2025-04-18 16:36:58,736 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 16:36:58] "POST /api/chat HTTP/1.1" 200 -
+2025-04-18 16:39:07,204 - __main__ - INFO - Æô¶¯FlaskÓ¦ÓÃ...
+2025-04-18 16:39:07,230 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:17943
+ * Running on http://192.168.0.104:17943
+2025-04-18 16:39:07,230 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-18 16:39:07,231 - werkzeug - INFO -  * Restarting with stat
+2025-04-18 16:39:07,501 - __main__ - INFO - Æô¶¯FlaskÓ¦ÓÃ...
+2025-04-18 16:39:07,510 - werkzeug - WARNING -  * Debugger is active!
+2025-04-18 16:39:07,514 - werkzeug - INFO -  * Debugger PIN: 141-277-860
+2025-04-18 16:39:12,359 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 16:39:12] "OPTIONS /api/chat HTTP/1.1" 200 -
+2025-04-18 16:39:12,608 - __main__ - DEBUG - === ÊÕµ½ĞÂÇëÇó ===
+2025-04-18 16:39:12,609 - __main__ - DEBUG - Ô­Ê¼ÇëÇóÊı¾İ: {"message": "Ãñ·¨µäµÚ21ÌõÊÇÊ²Ã´"}
+2025-04-18 16:39:12,609 - __main__ - DEBUG - ÓÃ»§ÏûÏ¢: Ãñ·¨µäµÚ21ÌõÊÇÊ²Ã´
+2025-04-18 16:39:12,609 - __main__ - DEBUG - ¹¹ÔìµÄÊäÈëJSON: {"question": "Ãñ·¨µäµÚ21ÌõÊÇÊ²Ã´"}
+2025-04-18 16:39:12,609 - __main__ - DEBUG - main.pyÂ·¾¶: G:\mindloom_git\MindLoom\src\main.py
+2025-04-18 16:39:12,609 - __main__ - DEBUG - Ö´ĞĞÃüÁî: G:\mindloom\shuiwu\venv\Scripts\python.exe G:\mindloom_git\MindLoom\src\main.py run -c task -id task_shuiwu_test0001 -i {"question": "Ãñ·¨µäµÚ21ÌõÊÇÊ²Ã´"}
+2025-04-18 16:39:12,609 - __main__ - DEBUG - ¿ªÊ¼Ö´ĞĞ×Ó½ø³Ì...
+2025-04-18 16:39:16,373 - __main__ - DEBUG - ×Ó½ø³ÌÖ´ĞĞÍê³É
+2025-04-18 16:39:16,373 - __main__ - DEBUG - ×Ó½ø³Ì·µ»ØÂë: 0
+2025-04-18 16:39:16,373 - __main__ - DEBUG - ×Ó½ø³Ì±ê×¼Êä³ö:
+ÈÎÎñÕıÔÚÔËĞĞ£¬run_id: 53ec97b9-e4fe-4a34-af33-fa2b0e0b0eb8
+llm_response: {'id': 'chatcmpl-BNbXdynfIe97IVtUs0MpYFrl3Snrv', 'object': 'chat.completion', 'created': 1744965553, 'model': 'gpt-4o-2024-08-06', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '<output><Type>¾ÓÃñ¸öÈË</Type><KeyWord>Ãñ·¨µäµÚ21Ìõ</KeyWord><ToDo>Ìá¹©Ãñ·¨µäµÚ21ÌõµÄÄÚÈİ</ToDo><Thinking>ÓÃ»§Ñ¯ÎÊµÄÊÇ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21ÌõµÄ¾ßÌåÄÚÈİ£¬ÕâÓë¸öË°¼ÆËãÎŞ¹Ø£¬µ«¿ÉÒÔÌá¹©·¨ÂÉÌõÎÄµÄÄÚÈİ¡£¸ù¾İ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ£º<TaxType>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</TaxType></Thinking><Reply>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</Reply></output>', 'refusal': None, 'annotations': []}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 422, 'completion_tokens': 203, 'total_tokens': 625, 'prompt_tokens_details': {'cached_tokens': 0, 'audio_tokens': 0}, 'completion_tokens_details': {'reasoning_tokens': 0, 'audio_tokens': 0, 'accepted_prediction_tokens': 0, 'rejected_prediction_tokens': 0}}, 'service_tier': 'default', 'system_fingerprint': 'fp_90122d973c'}
+{'Reply': '¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£'}
+
+2025-04-18 16:39:16,374 - __main__ - DEBUG - ×Ó½ø³Ì´íÎóÊä³ö:
+
+2025-04-18 16:39:16,374 - __main__ - DEBUG - Ô­Ê¼Êä³öÄÚÈİ:
+ÈÎÎñÕıÔÚÔËĞĞ£¬run_id: 53ec97b9-e4fe-4a34-af33-fa2b0e0b0eb8
+llm_response: {'id': 'chatcmpl-BNbXdynfIe97IVtUs0MpYFrl3Snrv', 'object': 'chat.completion', 'created': 1744965553, 'model': 'gpt-4o-2024-08-06', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '<output><Type>¾ÓÃñ¸öÈË</Type><KeyWord>Ãñ·¨µäµÚ21Ìõ</KeyWord><ToDo>Ìá¹©Ãñ·¨µäµÚ21ÌõµÄÄÚÈİ</ToDo><Thinking>ÓÃ»§Ñ¯ÎÊµÄÊÇ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21ÌõµÄ¾ßÌåÄÚÈİ£¬ÕâÓë¸öË°¼ÆËãÎŞ¹Ø£¬µ«¿ÉÒÔÌá¹©·¨ÂÉÌõÎÄµÄÄÚÈİ¡£¸ù¾İ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ£º<TaxType>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</TaxType></Thinking><Reply>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</Reply></output>', 'refusal': None, 'annotations': []}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 422, 'completion_tokens': 203, 'total_tokens': 625, 'prompt_tokens_details': {'cached_tokens': 0, 'audio_tokens': 0}, 'completion_tokens_details': {'reasoning_tokens': 0, 'audio_tokens': 0, 'accepted_prediction_tokens': 0, 'rejected_prediction_tokens': 0}}, 'service_tier': 'default', 'system_fingerprint': 'fp_90122d973c'}
+{'Reply': '¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£'}
+2025-04-18 16:39:16,374 - __main__ - DEBUG - ´ÓReplyĞĞÌáÈ¡µ½content: ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£
+2025-04-18 16:39:16,385 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 16:39:16] "POST /api/chat HTTP/1.1" 200 -
+2025-04-18 17:03:26,393 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:17943
+ * Running on http://192.168.0.104:17943
+2025-04-18 17:03:26,393 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-18 17:03:26,394 - werkzeug - INFO -  * Restarting with stat
+2025-04-18 17:03:26,662 - werkzeug - WARNING -  * Debugger is active!
+2025-04-18 17:03:26,666 - werkzeug - INFO -  * Debugger PIN: 141-277-860
+2025-04-18 17:03:31,599 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 17:03:31] "OPTIONS /api/chat HTTP/1.1" 200 -
+2025-04-18 17:03:35,503 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 17:03:35] "POST /api/chat HTTP/1.1" 200 -
+2025-04-18 17:05:32,987 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:17943
+ * Running on http://192.168.0.104:17943
+2025-04-18 17:05:32,988 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-18 17:05:32,989 - werkzeug - INFO -  * Restarting with stat
+2025-04-18 17:05:33,259 - werkzeug - WARNING -  * Debugger is active!
+2025-04-18 17:05:33,263 - werkzeug - INFO -  * Debugger PIN: 141-277-860
+2025-04-18 17:05:36,925 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 17:05:36] "OPTIONS /api/chat HTTP/1.1" 200 -
+2025-04-18 17:05:40,800 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 17:05:40] "POST /api/chat HTTP/1.1" 200 -
+2025-04-18 17:09:19,185 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:17943
+ * Running on http://192.168.0.104:17943
+2025-04-18 17:09:19,185 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-18 17:09:19,186 - werkzeug - INFO -  * Restarting with stat
+2025-04-18 17:09:19,465 - werkzeug - WARNING -  * Debugger is active!
+2025-04-18 17:09:19,469 - werkzeug - INFO -  * Debugger PIN: 141-277-860
+2025-04-18 17:09:24,554 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 17:09:24] "OPTIONS /api/chat HTTP/1.1" 200 -
+2025-04-18 17:09:24,803 - __main__ - INFO - ½ÓÊÕµ½Ç°¶ËµÄÏûÏ¢ÄÚÈİ: Ãñ·¨µäµÚ21ÌõÊÇÊ²Ã´
+2025-04-18 17:09:24,804 - __main__ - INFO - ×¼±¸·¢ËÍ¸ø main.py µÄÄÚÈİ: {"question": "\u6c11\u6cd5\u5178\u7b2c21\u6761\u662f\u4ec0\u4e48"}
+2025-04-18 17:09:28,542 - __main__ - INFO - main.py ·µ»ØµÄÍêÕûÊä³ö: ÈÎÎñÕıÔÚÔËĞĞ£¬run_id: 2f09a0b6-3589-4f2b-b474-dfb6de8b9ffb
+llm_response: {'id': 'chatcmpl-BNc0rJgGvHGg2mStibXoUn4Nh5iSt', 'object': 'chat.completion', 'created': 1744967365, 'model': 'gpt-4o-2024-08-06', 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': '<output><Type>¾ÓÃñ¸öÈË</Type><KeyWord>Ãñ·¨µäµÚ21Ìõ</KeyWord><ToDo>½âÊÍÃñ·¨µäµÚ21ÌõµÄÄÚÈİ</ToDo><Thinking>ÓÃ»§Ñ¯ÎÊµÄÊÇ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21ÌõµÄÄÚÈİ¡£¸ù¾İ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21ÌõµÄ¹æ¶¨£º<TaxType>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</TaxType></Thinking><Reply>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨ÁË×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äµÄÈÏ¶¨±ê×¼¡£¾ßÌåÄÚÈİÊÇ£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</Reply></output>', 'refusal': None, 'annotations': []}, 'logprobs': None, 'finish_reason': 'stop'}], 'usage': {'prompt_tokens': 422, 'completion_tokens': 205, 'total_tokens': 627, 'prompt_tokens_details': {'cached_tokens': 0, 'audio_tokens': 0}, 'completion_tokens_details': {'reasoning_tokens': 0, 'audio_tokens': 0, 'accepted_prediction_tokens': 0, 'rejected_prediction_tokens': 0}}, 'service_tier': 'default', 'system_fingerprint': 'fp_90122d973c'}
+{'Reply': '¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨ÁË×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äµÄÈÏ¶¨±ê×¼¡£¾ßÌåÄÚÈİÊÇ£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£'}
+
+2025-04-18 17:09:28,542 - __main__ - INFO - main.py ·µ»ØµÄ´íÎóĞÅÏ¢: 
+2025-04-18 17:09:28,542 - __main__ - INFO - ×îÖÕ·µ»Ø¸øÇ°¶ËµÄÄÚÈİ: <output><Type>¾ÓÃñ¸öÈË</Type><KeyWord>Ãñ·¨µäµÚ21Ìõ</KeyWord><ToDo>½âÊÍÃñ·¨µäµÚ21ÌõµÄÄÚÈİ</ToDo><Thinking>ÓÃ»§Ñ¯ÎÊµÄÊÇ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21ÌõµÄÄÚÈİ¡£¸ù¾İ¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21ÌõµÄ¹æ¶¨£º<TaxType>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</TaxType></Thinking><Reply>¡¶ÖĞ»ªÈËÃñ¹²ºÍ¹úÃñ·¨µä¡·µÚ21Ìõ¹æ¶¨ÁË×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äµÄÈÏ¶¨±ê×¼¡£¾ßÌåÄÚÈİÊÇ£º×ÔÈ»ÈËµÄ³öÉúÊ±¼äºÍËÀÍöÊ±¼äÒÔ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷¼ÇÔØµÄÊ±¼äÎª×¼£»Ã»ÓĞ³öÉúÖ¤Ã÷ºÍËÀÍöÖ¤Ã÷µÄ£¬ÒÔ»§¼®µÇ¼Ç»òÕßÆäËûÓĞĞ§Éí·İµÇ¼Ç¼ÇÔØµÄÊ±¼äÎª×¼¡£</Reply></output>
+2025-04-18 17:09:28,543 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 17:09:28] "POST /api/chat HTTP/1.1" 200 -
+2025-04-18 17:09:45,055 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:17943
+ * Running on http://192.168.0.104:17943
+2025-04-18 17:09:45,055 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-18 17:09:45,057 - werkzeug - INFO -  * Restarting with stat
+2025-04-18 17:09:45,319 - werkzeug - WARNING -  * Debugger is active!
+2025-04-18 17:09:45,325 - werkzeug - INFO -  * Debugger PIN: 141-277-860
+2025-04-18 17:09:53,781 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 17:09:53] "OPTIONS /api/chat HTTP/1.1" 200 -
+2025-04-18 17:09:58,945 - werkzeug - INFO - 127.0.0.1 - - [18/Apr/2025 17:09:58] "POST /api/chat HTTP/1.1" 200 -

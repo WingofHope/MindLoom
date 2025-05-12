@@ -1,18 +1,18 @@
 {
     "id": "task_shuiwu_test0001",
-    "name": "税务测试模板",
-    "description": "这是一个税务测试模板",
+    "name": "绋庡姟娴嬭瘯妯℃澘",
+    "description": "杩欐槸涓€涓◣鍔℃祴璇曟ā鏉�",
     "inputs": [
         {
             "name": "question",
-            "description": "测试问题。",
+            "description": "娴嬭瘯闂銆�",
             "type": "string"
         }
     ],
     "outputs":[
         {
             "name": "Reply",
-            "description": "测试答案。",
+            "description": "娴嬭瘯绛旀銆�",
             "type": "string"
         }
     ],

@@ -113,16 +113,3 @@ class SortByVector(ToolBase):
 		# 执行查询操作
 		result = self.sort_by_vector_run(inputs)
 		return result
-
-
-
-# if __name__ == "__main__":
-#
-# 	test_input = {
-# 		"table_name": "test_table",
-# 		"query_vector": [0.1, 0.2, 0.4],
-# 		"top_n": 6
-# 	}
-#
-# 	result = SortByVector.run(test_input)
-# 	print(f"查询结果: {result}")

@@ -1,12 +1,6 @@
 from pathlib import Path
 from typing import Dict, Any
 import json
-# import sys
-# from pathlib import Path
-#
-# project_root = Path(__file__).resolve().parents[4]
-# sys.path.append(str(project_root))
-
 from engine.executor.tool.tool_base import ToolBase
 from services.local_vectordb.local_vectordb_base import VectorDBHandler
 
@@ -69,15 +63,3 @@ class LookupByIndex(ToolBase):
 		# 执行查找操作
 		result = self.lookup_by_index_run(inputs)
 		return result
-
-
-# #
-# if __name__ == "__main__":
-#
-# 	test_input = {
-# 		"table_name": "test_table",
-# 		"index": 13
-# 	}
-#
-# 	result = LookupByIndex.run(test_input)
-#	print(f"查找结果: {result}")

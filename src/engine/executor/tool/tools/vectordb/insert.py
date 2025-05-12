@@ -2,9 +2,7 @@ import json
 from pathlib import Path
 from typing import Dict, List, Any
 
-# import sys
-# from pathlib import Path
-# sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent.parent))  # 添加到MindLoom根目录
+
 from engine.executor.tool.tool_base import ToolBase
 from services.local_vectordb.local_vectordb_base import VectorDBHandler
 
@@ -79,16 +77,3 @@ class Insert(ToolBase):
 		print(f"插入结果: {result}")
 		print(f"文件存储在: {VectorDBHandler._get_storage_dir()}")
 		return result
-
-# if __name__ == "__main__":
-# 	# 测试插入操作
-# 	test_input = {
-# 		"table_name": "test_table",
-# 		"vector": [0.1, 0.2, 0.4],
-# 		"raw_string": "测试文本",
-# 		"metadata": {"source": "test", "id": 123}
-# 	}
-#
-# 	result = Insert.run(test_input)
-# 	print(f"插入结果: {result}")
-# 	print(f"文件应存储在: {VectorDBHandler._get_storage_dir()}")
