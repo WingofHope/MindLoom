@@ -7,16 +7,6 @@
             "name": "question",
             "description": "用户原始关于出行计划的问题。",
             "type": "string"
-        },
-        {
-            "name": "thinking",
-            "description": "第一次根据问题的思考过程的记录。",
-            "type": "string"
-        },
-        {
-            "name": "weather_result",
-            "description": "调用知心天气API获得的天气预报信息的json结论。",
-            "type": "string"
         }
     ],
     "outputs": [
@@ -29,7 +19,8 @@
     "template": {
         "llm": {
             "mode": "chat",
-            "url": "http://localhost:400000000000/p/q"
+            "provider": "openai",
+            "uri": "/v1/embeddings"
         },
         "parse":{
             "mode": "static",
