@@ -2,3 +2,4 @@ pyyaml>=6.0
 cryptography>=42.0.0
 pika>=1.3.0
 pymongo>=4.6.0
+requests>=2.32.4
