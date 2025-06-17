@@ -20,7 +20,7 @@
         "llm": {
             "mode": "chat",
             "provider": "openai",
-            "uri": "/v1/embeddings"
+            "uri": "/v1/chat/completions"
         },
         "parse":{
             "mode": "static",
