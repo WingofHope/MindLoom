@@ -49,25 +49,28 @@ class Generator(Executor):
             placeholder_format = parse_config["placeholder_format"]
             post_body = self._replace_variables(post_body, inputs, placeholder_format)
 
-        # print("post_body: ", post_body)
         self.runtime_log.add_record(f"发送给 llm 的 post_body 是 {post_body} 。")
-        
-        # 发送请求到OpenAI API
+
+        # 拼接 base_url 和 uri
+        from config import config
+        base_url = config.get("generator.llm-provider.openai.base_url")
+        uri = llm_config.get("uri", "")
+        url = base_url.rstrip("/") + "/" + uri.lstrip("/")
+
         import requests
         try:
             response = requests.post(
-                llm_config["url"],
+                url,
                 headers={
                     "Authorization": f"Bearer {self.secret}",
                     "Content-Type": "application/json"
                 },
                 json=post_body,
                 timeout=50,
-                stream=False  # OpenAI API 支持流式响应，这里设置为 False
+                stream=False
             )
             response.raise_for_status()
             llm_response = response.json()
-            # print("llm_response:", llm_response)
             self.runtime_log.add_record(f"llm 的输出是 {llm_response} 。")
             
             # 使用extract规则从响应中提取所需信息
@@ -84,7 +87,6 @@ class Generator(Executor):
 
     def _handle_embedding_mode(self, llm_config, inputs):
         """处理embedding模式的请求"""
-        # TODO: 实现embedding模式的处理逻辑
         import requests
         try:
             # 构建embedding请求的post body
@@ -93,8 +95,14 @@ class Generator(Executor):
                 "model": llm_config.get("model", "text-embedding-ada-002")  # 使用配置中的模型或默认值
             }
 
+            # 拼接 base_url 和 uri
+            from config import config
+            base_url = config.get("generator.llm-provider.openai.base_url")
+            uri = llm_config.get("uri", "")
+            url = base_url.rstrip("/") + "/" + uri.lstrip("/")
+
             response = requests.post(
-                llm_config["url"],
+                url,
                 headers={
                     "Authorization": f"Bearer {self.secret}",
                     "Content-Type": "application/json"
@@ -283,28 +291,20 @@ class Generator(Executor):
         else:
             validated_llm["version"] = llm.get("version")
 
-        # 校验 url
-        if "url" not in llm or not isinstance(llm["url"], str):
-            errors.append("Genetor 模板中的 'template' -> 'llm' 字段必须包含有效的 'url'（字符串）。")
+        # 校验 uri
+        if "uri" not in llm or not isinstance(llm["uri"], str):
+            errors.append("Genetor 模板中的 'template' -> 'llm' 字段必须包含有效的 'uri'（字符串）。")
         else:
-            url = llm["url"]
+            uri = llm["uri"]
             # 定义一个基本的URL正则表达式模式
             regex = re.compile(
-                r'^(?:http)s?://'  # http:// 或 https://
-                r'(?:'  # 开始非捕获分组
-                r'(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # 域名...
-                r'localhost|'  # ...或 localhost
-                r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|'  # ...或 IPv4
-                r'$[A-F0-9]*:[A-F0-9:]+$'  # ...或 IPv6 (用方括号包围)
-                r')'
-                r'(?::\d+)?'  # 可选端口
                 r'(?:/?|[/?]\S+)$', re.IGNORECASE | re.VERBOSE)
             
             # 检查URL是否符合正则表达式模式
-            if re.match(regex, url) is None:
-                errors.append(f"Genetor 模板中的 'template' -> 'llm' -> 'url' 不是有效的URL值。")
+            if re.match(regex, uri) is None:
+                errors.append(f"Genetor 模板中的 'template' -> 'llm' -> 'uri' 不是有效的URI值。")
             else:
-                validated_llm["url"] = llm["url"]
+                validated_llm["uri"] = llm["uri"]
 
         # 如果有错误，抛出 TemplateError 并包含所有错误信息
         if errors:
