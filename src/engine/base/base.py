@@ -2,7 +2,6 @@
 
 import uuid
 
-from engine.base.template_loader import TemplateLoader
 from engine.base.runtime_log import RuntimeLog
 
 # 定义基础类
@@ -33,7 +32,7 @@ class Base:
     # 定义运行时log对象
     runtime_log = None
 
-    # 构造函数加载模板和校验模板
+    # 构造函数赋值
     def __init__(self, template_id, task_id=None, parent_run_id=None):
         self.template_id = template_id
         self.task_id = task_id
@@ -44,8 +43,12 @@ class Base:
         # 转换成小写，因为文件名和mongoDB默认用小写标记类
         self.class_name = class_name.lower()
 
-        template = TemplateLoader.load_template(self.class_name, self.template_id)
+        self._load_template()
         
+    # 加载模板和校验模板
+    def _load_template(self):
+        from engine.base.template_loader import TemplateLoader
+        template = TemplateLoader.load_template(self.class_name, self.template_id)
         self.template = self.validate_template(template)
 
 ############## 执行相关逻辑 ##############

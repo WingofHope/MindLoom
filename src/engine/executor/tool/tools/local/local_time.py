@@ -2,14 +2,10 @@
 
 
 from datetime import datetime
+import pytz
 from engine.executor.tool.tool_base import ToolBase
 
-class LocalTime(ToolBase):
-    
-    def __init__(self):
-        super().__init__()
-        self.import_or_install('pytz')
-        
+class LocalTime(ToolBase):    
     @staticmethod
     def metadata():
         return {

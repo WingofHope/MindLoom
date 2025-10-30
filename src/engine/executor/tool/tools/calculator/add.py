@@ -1,6 +1,8 @@
 # src/engine/executor/tool/tools/calculator/add.py
 
-class Add:
+from engine.executor.tool.tools.tool_base import ToolBase
+
+class Add(ToolBase):
     @staticmethod
     def metadata():
         return {

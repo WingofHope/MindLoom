@@ -1,12 +1,9 @@
-from engine.executor.tool.tool_base import ToolBase
-import random
 
+import random
+from engine.executor.tool.tools.tool_base import ToolBase
 
 class RandomNumberGenerator(ToolBase):
-	def __init__(self):
-		super().__init__()
-		globals()['random'] = self.import_or_install('random')
-	
+
 	@staticmethod
 	def metadata():
 		return {
