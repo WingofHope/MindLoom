@@ -12,6 +12,7 @@ class Tool(Executor):
     def __init__(self, template_id, task_id=None, parent_run_id=None):
         self.tool_class = self._load_tool(template_id)
         super().__init__(template_id, task_id, parent_run_id)
+        self.class_name = "tool"
 
     def _load_template(self):
         self.template = self.tool_class.metadata()
@@ -68,15 +69,22 @@ class Tool(Executor):
         module_name = f"engine.executor.tool.tools.{tool_id}"
         try:
             module = importlib.import_module(module_name)
+            
             for name, obj in inspect.getmembers(module, inspect.isclass):
-                if hasattr(obj, "metadata") and callable(obj.metadata) and \
-                   hasattr(obj, "run") and callable(obj.run):
+                if (name != "ToolBase" and 
+                    hasattr(obj, "metadata") and callable(obj.metadata) and 
+                    hasattr(obj, "run") and callable(obj.run)):
+                    
                     metadata = obj.metadata()
-                    meta_tool_id = metadata.get("id", None)
-                    if tool_id == meta_tool_id:
-                        return obj
-                    else:
-                        raise RuntimeError(f"工具类引用id {tool_id} 与定义id {meta_tool_id}不一致")
+                    if isinstance(metadata, dict):
+                        meta_tool_id = metadata.get("id")
+                        if meta_tool_id == tool_id:
+                            return obj
+            
+            raise RuntimeError(f"模块 {module_name} 中未找到id为 '{tool_id}' 的工具类")
+                
+        except ImportError:
+            raise RuntimeError(f"无法导入工具模块: {module_name}")
         except Exception as e:
             raise RuntimeError(f"加载工具 {tool_id} 错误: {e}")
 

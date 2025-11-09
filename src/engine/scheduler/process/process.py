@@ -17,15 +17,15 @@ class Process(Scheduler):
         'loop': Loop,
         'parallel': Parallel
     }
-    # 实例化流程类
-    process_instance = None
 
     def __init__(self, template_id, task_id=None, parent_run_id=None):
         super().__init__(template_id, task_id, parent_run_id)
+        self.class_name = "process"
         # 添加Process类到类映射中（这个代码有点别扭，没有更好的办法就这样弄了，待改进）
         self.EXECUTION_CLASS_MAPPING['process'] = Process
         # 根据流程类型创建具体的流程类
         ProcessType = Process.PROCESS_TYPES_MAPPING[self.template["execution"]["type"]]
+        # 获取流程类型
         self.process_instance = ProcessType(self)
 
 ############## 运行时相关逻辑 ##############

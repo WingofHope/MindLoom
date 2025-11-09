@@ -9,7 +9,7 @@ class ToolBase(ABC):
         """
         返回工具的元数据，所有工具必须实现此方法。
         """
-        pass
+        return {}
 
     @staticmethod
     @abstractmethod
@@ -17,4 +17,4 @@ class ToolBase(ABC):
         """
         执行工具的操作，所有工具必须实现此方法。
         """
-        pass
+        return {}

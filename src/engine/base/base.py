@@ -1,7 +1,6 @@
 # src/engine/base/base.py
 
 import uuid
-
 from engine.base.runtime_log import RuntimeLog
 
 # 定义基础类
@@ -18,25 +17,36 @@ class Base:
             self.errors = errors
 
     # 定义参数类型种类
-    PARAMETER_TYPE = ['string','number','bool','array','object','vector']
-    
-    # 定义提示模版
-    template_id = None
-    template = {}
-
-    # 定义运行时id参数
-    task_id = None
-    parent_run_id = None
-    run_id = None
-
-    # 定义运行时log对象
-    runtime_log = None
+    PARAMETER_TYPE = [
+        'string',         # 字符串
+        'number',         # 数字（含 int/float/decimal）
+        'bool',           # 布尔值
+        'array-number',   # 数字数组
+        'array-vector',   # 表征向量或embedding
+        'array-string',   # 字符串数组
+        'array-object',   # 对象数组
+        'object',         # 对象 / 结构体
+        # 'file',            # 文件（可以是任何类型的文件，路径或URI）
+        # 'audio',           # 声音（可以处理音频文件，支持多种操作如切割、合成等）
+        # 'image',           # 图片（处理图像，支持多种操作如滤镜、裁剪等）
+        # 'video'            # 视频（处理视频文件，支持多种操作如剪辑、拼接等）
+    ]
 
     # 构造函数赋值
     def __init__(self, template_id, task_id=None, parent_run_id=None):
+        # 确定当前模块类型
+        self.class_name = "base"
+
+        # 定义提示模版
         self.template_id = template_id
+        self.template = {} 
+
+        # 定义运行时id参数，用于记录每一次运行状态
         self.task_id = task_id
         self.parent_run_id = parent_run_id
+        self.run_id = None # 需要在run函数进行赋值，如果有重试模式，可能有多个run_id
+
+        self.runtime_log = None
 
         # 获取当前类名作为class_name
         class_name = self.__class__.__name__
@@ -103,6 +113,63 @@ class Base:
     def _execute(self,inputs):
         return {}
 
+############## 基础参数类型校验相关逻辑 ##############
+    # 校验参数的具体类型
+    @staticmethod
+    def _infer_canonical_type(value):
+    # 数字判定（不把 bool 当数字）
+        def _is_number(v):
+            return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+        if isinstance(value, str):
+            return 'string'
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            return 'number'
+        if isinstance(value, bool):
+            return 'bool'
+        if isinstance(value, dict) or hasattr(value, '__dict__'):
+            return 'object'
+        if isinstance(value, (list, tuple)):
+            if len(value) == 0:
+                return None  # 空数组语义不明确 -> 未定义类型
+            # 全为数字
+            if all(_is_number(x) for x in value):
+                return 'array-number'
+            # 全为字符串
+            if all(isinstance(x, str) for x in value):
+                return 'array-string'
+            # 全为 dict
+            if all(isinstance(x, dict) for x in value):
+                return 'array-object'
+            # 其它混合类型无法映射到已定义的类型
+            return None
+
+        # 其它类型无法映射
+        return None
+
+    @classmethod
+    def _validate_value_type(cls, value, expected_type):
+        """
+        校验 value 是否符合 expected_type（expected_type 已保证是 PARAMETER_TYPE 之一）。
+        报错格式（TypeError）严格按照跨平台规范：
+          "期望参数类型是 {expected_type}, 实际类型是 {actual_type_name_or_未定义类型}"
+        返回 True 表示通过校验。
+        """
+        actual = cls._infer_canonical_type(value)
+        if actual is None:
+            # 未能映射到已定义类型
+            raise TypeError(f"期望参数类型是 {expected_type}, 实际类型是 未定义类型")
+
+        # 对于 array-vector：允许数字数组通过（因为底层两者数据结构相同）
+        if expected_type == 'array-vector' and actual == 'array-number':
+            return True
+
+        if expected_type == actual:
+            return True
+
+        # 不匹配
+        raise TypeError(f"期望参数类型是 {expected_type}, 实际类型是 {actual}")
+
 ############## 提示模板相关逻辑 ##############
 
     # 获取提示模板
@@ -163,40 +230,39 @@ class Base:
         return validated_template
 
 ############## 提示模板校验相关函数 ##############
-
     # 校验参数列表
-    @staticmethod
-    def validate_template_params(params):
+    @classmethod
+    def validate_template_params(cls,params):
         errors = [] # 用于记录所有校验错误
         validated_params = [] # 用于存储验证通过的字段
 
         # 首先检查是否是字典，不是则直接返回报错
         if not isinstance(params, list):
             errors.append("该值必须是一个参数列表。")
-            raise Base.TemplateError(errors)
+            raise cls.TemplateError(errors)
 
         # 循环校验每个参数
         for item in params:
             try:
-                validated_params.append(Base.validate_template_params_item(item))
-            except Base.TemplateError as e:
+                validated_params.append(cls.validate_template_params_item(item))
+            except cls.TemplateError as e:
                 errors.extend(e.errors)
 
         # 如果有任何错误，抛出 TemplateError 异常
         if errors:
-            raise Base.TemplateError(errors)
+            raise cls.TemplateError(errors)
 
         return validated_params
 
     # 校验参数内容
-    @staticmethod
-    def validate_template_params_item(item):
+    @classmethod
+    def validate_template_params_item(cls,item):
         errors = [] # 用于记录所有校验错误
         validated_item = {} # 用于记录所有校验错误
 
         if not isinstance(item, dict):
             errors.append("参数必须是一个结构对象。")
-            raise Base.TemplateError(errors)
+            raise cls.TemplateError(errors)
 
         # 校验参数名字字段必须存在且是字符串
         if "name" not in item:
@@ -222,8 +288,8 @@ class Base:
             errors.append(f"'{param_name}' 参数必须包含 'type' 字段。")
         elif item["type"] is None or not isinstance(item["type"], str):
             errors.append(f"'{param_name}' 参数的 'type' 必须是有效的字符串类型。")
-        elif item["type"] not in Base.PARAMETER_TYPE:
-            base_types = ', '.join(f'{t}' for t in Base.PARAMETER_TYPE)
+        elif item["type"] not in cls.PARAMETER_TYPE:
+            base_types = ', '.join(f'{t}' for t in cls.PARAMETER_TYPE)
             errors.append(f"'{param_name}' 参数的 'type' 必须是 {base_types} 的一种。")
         else:
             validated_item["type"] = item["type"]
@@ -234,57 +300,17 @@ class Base:
         # 校验缺损值符合参数的类型定义
         if "default" in item and item["default"] != None:
             try:
-                validated_item["default"] = Base.validate_value_type(item["default"],item_type)
-            except Base.TemplateError as e:
-                error_messages = '\n'.join(str(error) for error in e.errors)
-                errors.append(f"'{param_name}' 参数的 'default' 错误：{error_messages}")
+                cls._validate_value_type(item["default"],item_type)
+                validated_item["default"] = item["default"]
+            except TypeError as e:
+                errors.append(f"'{param_name}' 参数的 'default' 错误：{str(e)}")
 
         if errors:
-            raise Base.TemplateError(errors)
+            raise cls.TemplateError(errors)
 
         return validated_item
 
-    # 校验值是否对应相应的类型
-    @staticmethod
-    def validate_value_type(value,type_name):
-        errors = []
-        if type_name == 'string' and not isinstance(value, str):
-            errors.append("参数值必须是 string 类型。")
-        elif type_name == 'number' and not isinstance(value, (int, float)):
-            errors.append("参数值必须是 number 类型。")
-        elif type_name == 'bool' and not isinstance(value, bool):
-            errors.append("参数值必须是 bool 类型。")
-        elif type_name == 'array' and not isinstance(value, list):
-            errors.append("参数值必须是 array 类型。")
-        elif type_name == 'object' and not isinstance(value, dict):
-            errors.append("参数值必须是 object 类型。")
-        elif type_name == 'vector':
-            if not (isinstance(value, (list, tuple)) and all(isinstance(x, (int, float)) for x in value)):
-                errors.append("参数值必须是 vector 类型。")
-
-        if errors:
-            raise Base.TemplateError(errors)
-
-        return value
-
 ############## 运行时参数校验相关逻辑 ##############
-
-    # 校验参数的具体类型
-    def _validate_type(self, value, expected_type):
-        if expected_type == 'string':
-            return isinstance(value, str)
-        elif expected_type == 'number':
-            return isinstance(value, (int, float))
-        elif expected_type == 'bool':
-            return isinstance(value, bool)
-        elif expected_type == 'array':
-            return isinstance(value, list)
-        elif expected_type == 'object':
-            return isinstance(value, dict)
-        elif expected_type == 'vector':
-            return isinstance(value, (list, tuple)) and all(isinstance(x, (int, float)) for x in value)
-        return False
-
     # 通用参数校验方法，保证是模板定义的参数，不多不少，类型准确
     def _validate_param(self, template_params, actual_params, param_type):
         errors = []
@@ -305,11 +331,11 @@ class Base:
                 continue
 
             # 校验参数类型
-            if not self._validate_type(value, expected_type):
-                errors.append(f"{param_type}参数类型不匹配: {name} (期望 {expected_type}, 实际 {type(value).__name__})")
-            else:
-                # 参数校验通过，添加到 validated_params
+            try:
+                self._validate_value_type(value, expected_type)
                 validated_params[name] = value
+            except TypeError as e:
+                errors.append(f" {param_type} 参数类型不匹配: {name} ({str(e)})")
         
         if errors:
             raise self.ParameterError(errors)
