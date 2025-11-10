@@ -19,6 +19,7 @@ class Generator(Executor):
     # 构造函数直接调用父类的构造函数加载模板和校验模板
     def __init__(self, template_id, task_id=None, parent_run_id=None):
         super().__init__(template_id, task_id, parent_run_id)
+        self.class_name = "generator"
 
 ############## 执行相关逻辑 ##############
 

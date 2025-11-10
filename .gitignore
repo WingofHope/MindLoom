@@ -10,4 +10,4 @@ venv/
 log/
 config/config.yaml
 config/secret.yaml
-
+data/local_vector_database/*
