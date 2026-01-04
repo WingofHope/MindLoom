@@ -60,7 +60,7 @@ class Tool(Executor):
                 # 清理临时文件（如果存在）
                 if os.path.exists(temp_req_file):
                     os.remove(temp_req_file)
-                raise RuntimeError(f"安装依赖失败: {requirements_path}, 错误: {e}")
+                raise Tool.ExecutionError(f"安装依赖失败: {requirements_path}, 错误: {e}")
         else:
             print("所有依赖包已安装，跳过安装")
 
@@ -81,12 +81,12 @@ class Tool(Executor):
                         if meta_tool_id == tool_id:
                             return obj
             
-            raise RuntimeError(f"模块 {module_name} 中未找到id为 '{tool_id}' 的工具类")
+            raise Tool.ExecutionError(f"模块 {module_name} 中未找到id为 '{tool_id}' 的工具类")
                 
         except ImportError:
-            raise RuntimeError(f"无法导入工具模块: {module_name}")
+            raise Tool.ExecutionError(f"无法导入工具模块: {module_name}")
         except Exception as e:
-            raise RuntimeError(f"加载工具 {tool_id} 错误: {e}")
+            raise Tool.ExecutionError(f"加载工具 {tool_id} 错误: {e}")
 
     def _load_tool(self, tool_id):
         """根据template_id加载工具类"""
@@ -106,7 +106,7 @@ class Tool(Executor):
                 # 构建路径
                 folder_path = os.path.join(tools_root, *tool_path[:i + 1])
                 if not os.path.exists(folder_path):
-                    raise RuntimeError(f"工具类不存在: {tool_id}")
+                    raise Tool.ExecutionError(f"工具类不存在: {tool_id}")
                 
                 # 检查并安装requirements.txt
                 requirements_path = os.path.join(folder_path, "requirements.txt")
@@ -125,12 +125,12 @@ class Tool(Executor):
             if isinstance(current_cache, type):
                 return current_cache
             else:
-                raise RuntimeError(f"工具类id不完整: {tool_id}")
+                raise Tool.ExecutionError(f"工具类id不完整: {tool_id}")
 
         # 检查 .py 文件是否存在
         file_path = os.path.join(tools_root, *tool_path, f"{tool_end}.py")
         if not os.path.exists(file_path):
-            raise RuntimeError(f"工具类不存在: {tool_id}")
+            raise Tool.ExecutionError(f"工具类不存在: {tool_id}")
 
         # 调用加载工具类函数
         loaded_class = self._load_tool_class(tool_id)
@@ -141,5 +141,8 @@ class Tool(Executor):
 
     def _execute(self, inputs):
         """执行工具"""
-        outputs = self.tool_class.run(inputs)
+        try:
+            outputs = self.tool_class.run(inputs)
+        except Exception as e:
+            raise Tool.ExecutionError(e)
         return outputs

@@ -82,9 +82,9 @@ class Generator(Executor):
             return outputs
             
         except requests.exceptions.RequestException as e:
-            raise RuntimeError(f"调用LLM API失败: {str(e)}")
+            raise self.ExecutionError(f"调用LLM API失败: {str(e)}")
         except Exception as e:
-            raise RuntimeError(f"处理LLM响应失败: {str(e)}")
+            raise self.ExecutionError(f"处理LLM响应失败: {str(e)}")
 
     def _handle_embedding_mode(self, llm_config, inputs):
         """处理embedding模式的请求"""
@@ -120,9 +120,9 @@ class Generator(Executor):
             return {"embedding": embedding_vector}
             
         except requests.exceptions.RequestException as e:
-            raise RuntimeError(f"调用Embedding API失败: {str(e)}")
+            raise self.ExecutionError(f"调用Embedding API失败: {str(e)}")
         except Exception as e:
-            raise RuntimeError(f"处理Embedding响应失败: {str(e)}")
+            raise self.ExecutionError(f"处理Embedding响应失败: {str(e)}")
 
     def _replace_variables(self, post_body, inputs, placeholder_format):
         """替换post_body字典中的模板变量"""
@@ -510,8 +510,8 @@ class Generator(Executor):
             return outputs
             
         except etree.XMLSyntaxError as e:
-            raise RuntimeError(f"XML解析错误: {str(e)}")
+            raise self.ExecutionError(f"XML解析错误: {str(e)}")
         except etree.XPathEvalError as e:
-            raise RuntimeError(f"XPath解析错误: {str(e)}")
+            raise self.ExecutionError(f"XPath解析错误: {str(e)}")
         except Exception as e:
-            raise RuntimeError(f"提取输出时发生错误: {str(e)}")
+            raise self.ExecutionError(f"提取输出时发生错误: {str(e)}")

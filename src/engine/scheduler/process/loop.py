@@ -26,7 +26,7 @@ class Loop(TypeProcess):
             elif execution["count"]["value_type"] == "constant":
                 count_num = count_value
             if not isinstance(count_num, int) or count_num < 0:
-                raise RuntimeError(f"循环次数参数 {count_value} 必须是大于0的整数。")
+                raise self.ExecutionError(f"循环次数参数 {count_value} 必须是大于0的整数。")
         # 遍历循环情况的遍历列表和循环次数获取
         elif loop_type == "iterate":
             iterable_value = execution["iterable"]["value"]
@@ -37,7 +37,7 @@ class Loop(TypeProcess):
                 iterable = iterable_value
                 iterable_name = "_iterable_each_value"
             if not isinstance(iterable, list):
-                raise RuntimeError(f"循环遍历参数类型错误，必须是一个列表。")
+                raise self.ExecutionError(f"循环遍历参数类型错误，必须是一个列表。")
             count_num = len(iterable)
 
         # 打印流程开始记录
@@ -51,11 +51,11 @@ class Loop(TypeProcess):
             if loop_type == "condition":
                 try:
                     ret = self.evaluate_condition(execution["condition"])
-                except RuntimeError as re:
+                except self.ExecutionError as re:
                     self.process_instance.runtime_log.add_record(f"条件判断触发错误: {str(re)}。")
                     ret = False
                 except Exception as e:
-                    raise RuntimeError(f"条件判断触发未知错误: {str(e)}") from e
+                    raise self.ExecutionError(f"条件判断触发未知错误: {str(e)}") from e
                 if not ret:
                     break
             elif loop_type == "count":

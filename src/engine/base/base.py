@@ -15,6 +15,12 @@ class Base:
         def __init__(self, errors):
             super().__init__("参数格式校验失败")
             self.errors = errors
+    # 定义运行时执行过程中出现的业务逻辑错误
+    class ExecutionError(Exception):
+        def __init__(self, error):
+            super().__init__("执行过程出错")
+            self.error = error
+
 
     # 定义参数类型种类
     PARAMETER_TYPE = [
@@ -99,6 +105,11 @@ class Base:
             errors_output = "参数校验失败，错误信息如下：\n" + "\n".join(errors_list)
             self.runtime_log.mark_as_failed(errors_output)
             raise pe
+        except self.ExecutionError as re:
+            error_output = f"运行时逻辑错误：{re.error}"
+            self.runtime_log.mark_as_failed(error_output)
+            #raise re
+            return None
         except Exception as exc:
             self.runtime_log.mark_as_failed(exc)
             # 继续向上抛出异常错误

@@ -354,10 +354,10 @@ class Scheduler(Base):
                 "\n".join(e.errors)
             ]
             self.runtime_log.add_record("\n".join(error_messages))
-            raise RuntimeError(f"模板 {call_template_id} 格式校验错误: {e}")
+            raise Scheduler.ExecutionError(f"模板 {call_template_id} 格式校验错误: {e}")
         except Exception as e:
             self.runtime_log.add_record(f"模板 {call_template_id} 运行时错误: {str(e)}")
-            raise RuntimeError(f"模板未知错误: {e}")
+            raise Scheduler.ExecutionError(f"模板未知错误: {e}")
 
         # 获取错误处理策略，如果不存在则填默认值abort，终止
         error_handling_strategy = call_dict.get("error_handling", {}).get("strategy","abort")
@@ -393,7 +393,7 @@ class Scheduler(Base):
                     "\n".join(e.errors)
                 ]
                 self.runtime_log.add_record("\n".join(error_messages))
-                raise RuntimeError(f"调用参数错误: {e}")
+                raise Scheduler.ExecutionError(f"调用参数错误: {e}")
             # 运行时错误处置
             except RuntimeError as e:
                 # 打印错误日志
@@ -412,7 +412,7 @@ class Scheduler(Base):
                 # 根据错误处理策略决定后续行为
                 if error_handling_strategy == "abort":
                     self.runtime_log.add_record(f"执行调用任务 {call_run_id} 运行时错误,执行策略为'abort'，任务终止。")
-                    raise RuntimeError(f"执行调用任务失败，错误信息: {str(e)}")
+                    raise Scheduler.ExecutionError(f"执行调用任务失败，错误信息: {str(e)}")
                 elif error_handling_strategy == "skip":
                     self.runtime_log.add_record(f"执行调用任务 {call_run_id} 执行失败，执行策略为'skip'，跳过此任务，未返回输出。")
                     outputs = None
@@ -420,7 +420,7 @@ class Scheduler(Base):
             # 未知错误直接返回报错
             except Exception as e:
                 self.runtime_log.add_record(f"执行调用运行时未知错误: {str(e)}")
-                raise RuntimeError(f"执行调用运行未知错误: {e}")
+                raise Scheduler.ExecutionError(f"执行调用运行未知错误: {e}")
 
         # 将输出参数设置到类内存变量空间
         if outputs is not None:
@@ -437,9 +437,9 @@ class Scheduler(Base):
             output_target = def_output["target"]
             # 校验板定义的目标参数存在且类型合法
             if output_name not in outputs:
-                raise RuntimeError(f"未返回期待的内存空间参数 {output_name}。")
+                raise Scheduler.ExecutionError(f"未返回期待的内存空间参数 {output_name}。")
             elif self._validate_type(outputs[output_name], output_type) == False:
-                raise RuntimeError(f"返回的变量 {output_name} 类型与 {output_target} 期待类型不符，不是预期的 {input_type} 类型。")
+                raise Scheduler.ExecutionError(f"返回的变量 {output_name} 类型与 {output_target} 期待类型不符，不是预期的 {input_type} 类型。")
             else:
                 parameters[output_target] = outputs[output_name]
         
@@ -461,7 +461,7 @@ class Scheduler(Base):
                 # 如果模板定义存在source，则在类内存空间参数字典中寻找并赋值
                 input_source = def_input["source"]
                 if input_source not in self.parameters:
-                    raise RuntimeError(f"变量空间缺少参数 {input_source}。")
+                    raise Scheduler.ExecutionError(f"变量空间缺少参数 {input_source}。")
                 else:
                     value = self.parameters[input_source]
 
@@ -471,7 +471,7 @@ class Scheduler(Base):
             if self._validate_type(value, input_type):
                 inputs[input_name] = value
             else:
-                raise RuntimeError(f"被传入的变量 {input_name} 类型值不是预期的 {input_type} 类型。")
+                raise Scheduler.ExecutionError(f"被传入的变量 {input_name} 类型值不是预期的 {input_type} 类型。")
         # 返回获取的输入参数
         return inputs
 
