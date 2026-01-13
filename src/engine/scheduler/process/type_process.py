@@ -10,6 +10,10 @@ class TypeProcess(ABC):
         def __init__(self, errors):
             super().__init__("Template 格式校验失败：")
             self.errors = errors
+    class ConditionError(Exception):
+        def __init__(self, error):
+            super().__init__("条件校验错误")
+            self.error = error
 
     # 定义流程条件，选择分支和循环会用到
     CONDITION_OPERATIONS = [
@@ -171,13 +175,13 @@ class TypeProcess(ABC):
                 return left_value <= right_value
             elif operation == "contains":
                 if not isinstance(left_value, (str, list)):
-                    raise RuntimeError(f"'contains' 操作的左操作数必须是字符串或数组。")
+                    raise self.ConditionError(f"'contains' 操作的左操作数必须是字符串或数组。")
                 return right_value in left_value
             elif operation == "startsWith":
                 if not isinstance(left_value, str):
-                    raise RuntimeError(f"'startsWith' 操作的左操作数必须是字符串。")
+                    raise self.ConditionError(f"'startsWith' 操作的左操作数必须是字符串。")
                 return left_value.startswith(right_value)
             elif operation == "endsWith":
                 if not isinstance(left_value, str):
-                    raise RuntimeError(f"'endsWith' 操作的左操作数必须是字符串。")
+                    raise self.ConditionError(f"'endsWith' 操作的左操作数必须是字符串。")
                 return left_value.endswith(right_value)
